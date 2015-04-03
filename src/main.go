@@ -1,6 +1,7 @@
 package main
 
 import (
+     "log"
      "fmt"
      "net/http"
      "github.com/shirou/gopsutil/mem"
@@ -12,6 +13,11 @@ import (
 )
 
 func all(w http.ResponseWriter, r *http.Request) {
+    if r.URL.Path != "/" {
+         errorHandler(w, r, http.StatusNotFound)
+         return
+     }
+
      v, _ := mem.VirtualMemory()
      k, _ := disk.DiskUsage("/")
      c, _ := cpu.CPUInfo()
@@ -28,7 +34,24 @@ func all(w http.ResponseWriter, r *http.Request) {
      fmt.Fprintf(w, "networkinterfaces: %v\n", n)
 }
 
+func Log(handler http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+	handler.ServeHTTP(w, r)
+    })
+}
+
+func errorHandler(w http.ResponseWriter, r *http.Request, status int) {
+    w.WriteHeader(status)
+    if status == http.StatusNotFound {
+        fmt.Fprint(w, "404")
+    }
+}
+
 func main() {
-	http.HandleFunc("/", all)
-	http.ListenAndServe(":8000", nil)
+     http.HandleFunc("/", all)
+     err := http.ListenAndServe(":8000", Log(http.DefaultServeMux))
+     if err != nil {
+        log.Fatal("ListenAndServe: ", err)
+     }
 }
