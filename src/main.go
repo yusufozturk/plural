@@ -24,6 +24,13 @@ func all(w http.ResponseWriter, r *http.Request) {
     timezone  := exec.Command("date","+%Z")
     timezoneout, err := timezone.Output()
 
+    hostname := exec.Command("hostname","-f")
+    hostcut := exec.Command("cut","-d.","-f","2-")
+    hostnameOut, _ := hostname.StdoutPipe()
+    hostname.Start()
+    hostcut.Stdin = hostnameOut
+    domainname, _ := hostcut.Output()
+
     if err != nil {
        fmt.Println(err.Error())
        return
@@ -36,7 +43,6 @@ func all(w http.ResponseWriter, r *http.Request) {
     l, _ := load.LoadAvg()
     n, _ := net.NetInterfaces()
 
-
     fmt.Fprintf(w, "memorytotal: %v\nmemoryfree: %v\nmemoryused: %f%%\n", v.Total, v.Free, v.UsedPercent)
     fmt.Fprintf(w, "disktotal: %v\ndiskfree: %v\ndiskused: %f%%\n", k.Total, k.Free, k.UsedPercent)
     fmt.Fprintf(w, "cpu: %v\n", c)
@@ -45,6 +51,7 @@ func all(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "networkinterfaces: %v\n", n)
     fmt.Fprintf(w, "kernelversion: %s", string(kernelverout))
     fmt.Fprintf(w, "timezone: %s", string(timezoneout))
+    fmt.Fprintf(w, "domain: %s", domainname)
 }
 
 func Log(handler http.Handler) http.Handler {
