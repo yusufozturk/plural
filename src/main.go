@@ -21,6 +21,8 @@ func all(w http.ResponseWriter, r *http.Request) {
 
     kernelver := exec.Command("uname","-r")
     kernelverout, err := kernelver.Output()
+    timezone  := exec.Command("date","+%Z")
+    timezoneout, err := timezone.Output()
 
     if err != nil {
        fmt.Println(err.Error())
@@ -41,7 +43,8 @@ func all(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "hostname: %v\nuptime: %v\nos: %v\nplatform: %v\nplatformfamily: %v\nplatformverison: %v\nvirtualizationsystem: %v\nvirtualizationrole: %v\n", h.Hostname, h.Uptime, h.OS, h.Platform, h.PlatformFamily, h.PlatformVersion, h.VirtualizationSystem, h.VirtualizationRole)
     fmt.Fprintf(w, "load1: %v\nload5: %v\nload15: %v\n", l.Load1, l.Load5, l.Load15)
     fmt.Fprintf(w, "networkinterfaces: %v\n", n)
-    fmt.Fprintf(w, "kernelversion: %s\n", string(kernelverout))
+    fmt.Fprintf(w, "kernelversion: %s", string(kernelverout))
+    fmt.Fprintf(w, "timezone: %s", string(timezoneout))
 }
 
 func Log(handler http.Handler) http.Handler {
