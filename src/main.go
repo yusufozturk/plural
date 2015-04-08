@@ -5,6 +5,7 @@ import (
     "fmt"
     "net/http"
     "os/exec"
+    "io/ioutil"
     "github.com/shirou/gopsutil/mem"
     "github.com/shirou/gopsutil/disk"
     "github.com/shirou/gopsutil/cpu"
@@ -25,7 +26,7 @@ func all(w http.ResponseWriter, r *http.Request) {
     timezoneout, err := timezone.Output()
 
     hostname := exec.Command("hostname","-f")
-    hostcut := exec.Command("cut","-d.","-f","2-")
+    hostcut := exec.Command("cud","-d.","-f","2-")
     hostnameOut, _ := hostname.StdoutPipe()
     hostname.Start()
     hostcut.Stdin = hostnameOut
@@ -42,6 +43,43 @@ func all(w http.ResponseWriter, r *http.Request) {
     h, _ := host.HostInfo()
     l, _ := load.LoadAvg()
     n, _ := net.NetInterfaces()
+
+   // AWS 
+
+   response, err := http.Get("http://169.254.169.254/latest")
+   if response.Status == string("200 OK") {
+      if err != nil {
+         fmt.Printf("%s", err)
+       } else {
+          amiid, err := http.Get("http://169.254.169.254/latest/meta-data/ami-id")
+          defer amiid.Body.Close()
+          amiidOut, err := ioutil.ReadAll(amiid.Body)
+          instanceid, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
+          defer instanceid.Body.Close()
+          instanceidOut, err := ioutil.ReadAll(instanceid.Body)
+          instancetype, err := http.Get("http://169.254.169.254/latest/meta-data/instance-type")
+          defer instancetype.Body.Close()
+          instancetypeOut, err := ioutil.ReadAll(instancetype.Body)
+          availabilityzone, err := http.Get("http://169.254.169.254/latest/meta-data/placement/availability-zone")
+          defer availabilityzone.Body.Close()
+          availabilityzoneOut, err := ioutil.ReadAll(availabilityzone.Body)
+          securitygroups, err := http.Get("http://169.254.169.254/latest/meta-data/security-groups")
+          defer securitygroups.Body.Close()
+          securitygroupsOut, err := ioutil.ReadAll(securitygroups.Body)
+          profile, err := http.Get("http://169.254.169.254/latest/meta-data/profile")
+          defer profile.Body.Close()
+          profileOut, err := ioutil.ReadAll(profile.Body)
+          if err != nil {
+             fmt.Printf("%s", err)
+          }
+          fmt.Fprintf(w, "ec2_ami_id: %s\n", string(amiidOut))
+          fmt.Fprintf(w, "ec2_instance_id: %s\n", string(instanceidOut))
+          fmt.Fprintf(w, "ec2_instance_type: %s\n", string(instancetypeOut))
+          fmt.Fprintf(w, "ec2_availability_zone: %s\n", string(availabilityzoneOut))
+          fmt.Fprintf(w, "ec2_security_groups: %s\n", string(securitygroupsOut))
+          fmt.Fprintf(w, "ec2_profile: %s\n", string(profileOut))
+      }
+    }
 
     fmt.Fprintf(w, "memorytotal: %v\nmemoryfree: %v\nmemoryused: %f%%\n", v.Total, v.Free, v.UsedPercent)
     fmt.Fprintf(w, "disktotal: %v\ndiskfree: %v\ndiskused: %f%%\n", k.Total, k.Free, k.UsedPercent)
