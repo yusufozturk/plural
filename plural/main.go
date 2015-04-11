@@ -11,18 +11,20 @@ import (
     "io/ioutil"
     "strings"
     "bytes"
+    "strconv"
     "github.com/spf13/viper"
     "github.com/shirou/gopsutil/mem"
     "github.com/shirou/gopsutil/disk"
     "github.com/shirou/gopsutil/host"
     "github.com/shirou/gopsutil/load"
+    "plural/networkip"
 )
 
 // HTTP client timeout
 var timeout = time.Duration(300 * time.Millisecond)
 
 func dialTimeout(network, addr string) (net.Conn, error) {
-        return net.DialTimeout(network, addr, timeout)
+	return net.DialTimeout(network, addr, timeout)
 }
 
 func main() {
@@ -31,7 +33,7 @@ func main() {
 
     // Configuration file settings using key-value
     viper.SetConfigName("plural")
-    viper.AddConfigPath("/opt/plural/conf")
+    viper.AddConfigPath("/")
     err := viper.ReadInConfig()
     if err != nil {
        fmt.Println("No Configuration File Using DEFAULTS")
@@ -79,6 +81,21 @@ func main() {
     k, _ := disk.DiskUsage("/")
     h, _ := host.HostInfo()
     l, _ := load.LoadAvg()
+    memusedConv := strconv.FormatFloat(v.UsedPercent, 'f', 6, 64)
+    memused := strings.Split(memusedConv, ".")
+    diskusedConv := strconv.FormatFloat(k.UsedPercent, 'f', 6, 64)
+    diskused := strings.Split(diskusedConv, ".")
+    loadoneConv := strconv.FormatFloat(l.Load1, 'f', 6, 64)
+    loadone := strings.Split(loadoneConv, ".")
+    loadfifteenConv := strconv.FormatFloat(l.Load15, 'f', 6, 64)
+    loadfifteen := strings.Split(loadfifteenConv, ".")
+    loadfiveConv := strconv.FormatFloat(l.Load5, 'f', 6, 64)
+    loadfive := strings.Split(loadfiveConv, ".")
+
+    ipaddress, err := networkip.ExternalIP()
+    if err != nil {
+       fmt.Println(err.Error())
+    }
 
     // ElasticSearch endpoint
     elastic_url := "http://" + elastic_host + ":" + elastic_port + "/" + environment + "/" + h.Hostname
@@ -104,14 +121,14 @@ func main() {
     "diskused": "%v",
     "domain": "%s",`
 
-    topLine := fmt.Sprintf(top, k.Free, k.Total, k.UsedPercent, strings.TrimSpace(domainstring))
+    topLine := fmt.Sprintf(top, k.Free, k.Total, diskused[0], strings.TrimSpace(domainstring))
     writeTop, err := io.WriteString(f, topLine)
     if err != nil {
        fmt.Println(writeTop, err)
        return
     }
 
-    // Local meta-data AWS
+    // Local AWS meta-data
     awsResponse, err := client.Get("http://169.254.169.254/latest")
     if awsResponse != nil {
        amiid, err := http.Get("http://169.254.169.254/latest/meta-data/ami-id")
@@ -138,12 +155,12 @@ func main() {
        }
 
        aws := `
-    "ec2_ami_id": "%s",
-    "ec2_availability_zone": "%s",
-    "ec2_instance_id": "%s",
-    "ec2_instance_type": "%s",
-    "ec2_profile": "%s",
-    "ec2_security_groups": "%s",`
+       "ec2_ami_id": "%s",
+       "ec2_availability_zone": "%s",
+       "ec2_instance_id": "%s",
+       "ec2_instance_type": "%s",
+       "ec2_profile": "%s",
+       "ec2_security_groups": "%s",`
 
        awsLine := fmt.Sprintf(aws, amiidOut, availabilityzoneOut, instanceidOut, instancetypeOut, profileOut, securitygroupsOut)
        writeAWS, err := io.WriteString(f, awsLine)
@@ -155,6 +172,7 @@ func main() {
 
     bottom := `
     "hostname": "%s",
+    "ipaddress": "%s",
     "kernelversion": "%s",
     "load15": "%v",
     "load1": "%v",
@@ -172,7 +190,8 @@ func main() {
     "virtualizationsystem": "%v"
   }`
 
-    bottomLine := fmt.Sprintf(bottom, h.Hostname, strings.TrimSpace(kernelverstring), l.Load15, l.Load1, l.Load5, v.Free, v.Total, v.UsedPercent, h.OS, h.Platform, h.PlatformFamily, h. PlatformVersion, strings.TrimSpace(timezonestring), h.Uptime, h.VirtualizationRole, h.VirtualizationSystem)
+    bottomLine := fmt.Sprintf(bottom, h.Hostname, ipaddress, strings.TrimSpace(kernelverstring), loadfifteen[0], loadone[0], loadfive[0], v.Free, v.Total, memused[0], h.OS, h.Platform, h.PlatformFamily, h. PlatformVersion, strings.TrimSpace(timezonestring), h.Uptime, h.VirtualizationRole, h.VirtualizationSystem)
+
     writeLine, err := io.WriteString(f, bottomLine)
     if err != nil {
        fmt.Println(writeLine, err)
@@ -189,7 +208,7 @@ func main() {
           fmt.Println(err.Error())
           return
        }
-       fmt.Println("ElasticSearch EndPoint:", elastic_url)
+       fmt.Println("ElasticSearch EndPoint:", elastic_url)   
        reqDelete, err := http.NewRequest("DELETE", elastic_url, nil)
        respDelete, err := http.DefaultClient.Do(reqDelete)
        fmt.Println("Delete ElasticSearch Type Status:", respDelete.Status)
@@ -202,7 +221,7 @@ func main() {
           fmt.Println(err.Error())
        }
        defer respPost.Body.Close()
-
+ 
        fmt.Println("POST JSON ElasticSearch Type Status:", respPost.Status)
        postBody, _ := ioutil.ReadAll(respPost.Body)
        fmt.Println("POST Response Body:", string(postBody))
