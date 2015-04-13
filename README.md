@@ -20,7 +20,7 @@ Agent Run Time:
 
 The agent runs every five minutes, it will delete the host out of the environment and post real-time data at the five minute interval.
 
-** If you were to delete all hosts in the environment nightly.   If the agent is running and the server is up, it will populate the inventory currently with only running hosts and their data.  This works very well in dynamic cloud environments.
+** If you were to delete all hosts in the environment nightly.   If the agent is running and the server is up, it will populate the inventory currently with only running hosts and their data.  This works very well in dynamic compute environments.
 
     # Delete all hosts out of the environment
     curl -XDELETE http://elasticsearch:9200/environment/*
