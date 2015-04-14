@@ -47,6 +47,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
 
     go get github.com/spf13/viper
     go get github.com/shirou/gopsutil
+    go get github.com/dustin/go-humanize
 
 ----------
 
@@ -73,8 +74,8 @@ The agent runs every five minutes, it will delete the host out of the environmen
 **Example JSON Output:**
 
     {
-       "diskfree": "6797950976",
-       "disktotal": "8454070272",
+       "diskfree": "6.7GB",
+       "disktotal": "8.5GB",
        "diskused": "19",
        "domain": "ec2.internal",
        "ec2_ami_id": "ami-bc8131d4",
@@ -90,9 +91,9 @@ The agent runs every five minutes, it will delete the host out of the environmen
        "load15": "0",
        "load1": "0",
        "load5": "0",
-       "memoryfree": "134880000",
-       "memorytotal": "604480000",
-       "memoryused": "66",
+       "memoryfree": "133MB",
+       "memorytotal": "604MB",
+       "memoryused": "67",
        "os": "linux",
        "packages": [
          "acl-2.2.49-6.el6.x86_64",
@@ -130,6 +131,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
 
  - CentOS/RHEL 6.x
  - Fedora 20
+ - Ubuntu 14
  - Mac OS X 13.4.0
 
 ----------
