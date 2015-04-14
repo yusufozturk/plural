@@ -29,6 +29,7 @@ import (
     "github.com/shirou/gopsutil/disk"
     "github.com/shirou/gopsutil/host"
     "github.com/shirou/gopsutil/load"
+    "github.com/dustin/go-humanize"
     "plural/networkip"
 )
 
@@ -36,7 +37,7 @@ import (
 var timeout = time.Duration(300 * time.Millisecond)
 
 func dialTimeout(network, addr string) (net.Conn, error) {
-        return net.DialTimeout(network, addr, timeout)
+	return net.DialTimeout(network, addr, timeout)
 }
 
 func main() {
@@ -72,16 +73,20 @@ func main() {
     k, _ := disk.DiskUsage("/")
     h, _ := host.HostInfo()
     l, _ := load.LoadAvg()
-    memusedConv := strconv.FormatFloat(v.UsedPercent, 'f', 6, 64)
-    memused := strings.Split(memusedConv, ".")
-    diskusedConv := strconv.FormatFloat(k.UsedPercent, 'f', 6, 64)
-    diskused := strings.Split(diskusedConv, ".")
+    memusedprctConv := strconv.FormatFloat(v.UsedPercent, 'f', 6, 64)
+    memusedprct := strings.Split(memusedprctConv, ".")[0]
+    memfree := humanize.Bytes(v.Free)
+    memtotal := humanize.Bytes(v.Total)
+    diskusedprctConv := strconv.FormatFloat(k.UsedPercent, 'f', 6, 64)
+    diskusedprct := strings.Split(diskusedprctConv, ".")[0]
+    diskfree := humanize.Bytes(k.Free)
+    disktotal := humanize.Bytes(k.Total)
     loadoneConv := strconv.FormatFloat(l.Load1, 'f', 6, 64)
-    loadone := strings.Split(loadoneConv, ".")
+    loadone := strings.Split(loadoneConv, ".")[0]
     loadfifteenConv := strconv.FormatFloat(l.Load15, 'f', 6, 64)
-    loadfifteen := strings.Split(loadfifteenConv, ".")
+    loadfifteen := strings.Split(loadfifteenConv, ".")[0]
     loadfiveConv := strconv.FormatFloat(l.Load5, 'f', 6, 64)
-    loadfive := strings.Split(loadfiveConv, ".")
+    loadfive := strings.Split(loadfiveConv, ".")[0]
 
     ipaddress, err := networkip.ExternalIP()
     if err != nil {
@@ -89,6 +94,8 @@ func main() {
     }
 
     // UNIX system commands
+    rpmbin := exec.Command("ls", "/bin/rpm")
+    rpmbinout, err := rpmbin.Output()
     rpmqa := exec.Command("rpm", "-qa")
     rpmsort := exec.Command("sort")
     rpmqaOut, err := rpmqa.StdoutPipe()
@@ -98,6 +105,19 @@ func main() {
     rpmstring := string(rpmOut)
     rpmoutputSlice := strings.Split(rpmstring,"\n")
     rpmjs,_ := json.Marshal(rpmoutputSlice)
+
+    dpkgbin := exec.Command("ls", "/usr/bin/dpkg")
+    dpkgbinout, err := dpkgbin.Output()
+    dpkg := exec.Command("dpkg", "-l")
+    dpkgawk := exec.Command("awk", "/^[a-z]/{print$2\"-\"$3}")
+    dpkglOut, err := dpkg.StdoutPipe()
+    dpkg.Start()
+    dpkgawk.Stdin = dpkglOut
+    dpkgOut, err := dpkgawk.Output()
+    dpkgstring := string(dpkgOut)
+    dpkgoutputSlice := strings.Split(dpkgstring,"\n")
+    dpkgjs,_ := json.Marshal(dpkgoutputSlice)
+
 
     kernelver := exec.Command("uname","-r")
     kernelverout, err := kernelver.Output()
@@ -116,7 +136,6 @@ func main() {
 
     if err != nil {
        fmt.Println(err.Error())
-       return
     }
 
     // ElasticSearch endpoint
@@ -143,7 +162,7 @@ func main() {
     "diskused": "%v",
     "domain": "%s",`
 
-    topLine := fmt.Sprintf(top, k.Free, k.Total, diskused[0], strings.TrimSpace(domainstring))
+    topLine := fmt.Sprintf(top, diskfree, disktotal, diskusedprct, strings.TrimSpace(domainstring))
     writeTop, err := io.WriteString(f, topLine)
     if err != nil {
        fmt.Println(writeTop, err)
@@ -151,8 +170,8 @@ func main() {
     }
 
     // Local AWS meta-data
-    awsResponse, err := client.Get("http://169.254.169.254/latest")
-    if awsResponse != nil {
+    awsResponse, err := client.Get("http://169.254.169.254/latest/")
+    if awsResponse != nil && awsResponse.Status == string("200 OK") {
        amiid, err := http.Get("http://169.254.169.254/latest/meta-data/ami-id")
        defer amiid.Body.Close()
        amiidOut, err := ioutil.ReadAll(amiid.Body)
@@ -207,21 +226,37 @@ func main() {
     "memoryused": "%v",
     "os": "%v",`
 
-    bottomLine := fmt.Sprintf(bottom, h.Hostname, ipaddress, strings.TrimSpace(kernelverstring), loadfifteen[0], loadone[0], loadfive[0], v.Free, v.Total, memused[0], h.OS)
+
+    bottomLine := fmt.Sprintf(bottom, h.Hostname, ipaddress, strings.TrimSpace(kernelverstring), loadfifteen, loadone, loadfive, memfree, memtotal, memusedprct, h.OS)
     writeBottom, err := io.WriteString(f, bottomLine)
     if err != nil {
        fmt.Println(writeBottom, err)
        return
     }
 
-    packages :=`
-    "packages": %s,`
 
-    packagesLine := fmt.Sprintf(packages, string(rpmjs))
-    writePackages, err := io.WriteString(f, packagesLine)
-    if err != nil {
-       fmt.Println(writePackages, err)
-       return
+    if string(rpmbinout) != "" {
+       packages :=`
+       "packages": %s,`
+
+       rpmLine := fmt.Sprintf(packages, string(rpmjs))
+       writeRpm, err := io.WriteString(f, rpmLine)
+       if err != nil {
+          fmt.Println(writeRpm, err)
+          return
+       }
+    }
+
+    if string(dpkgbinout) != "" {
+       packages :=`
+       "packages": %s,`
+
+       dpkgLine := fmt.Sprintf(packages, string(dpkgjs))
+       writeDpkg, err := io.WriteString(f, dpkgLine)
+       if err != nil {
+          fmt.Println(writeDpkg, err)
+          return
+       }
     }
 
     last := `
