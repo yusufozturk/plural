@@ -1,7 +1,7 @@
 // (C) Copyright 2015 Timothy Marcinowski
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at 
+//  You may obtain a copy of the License at
 //  http://www.apache.org/licenses/LICENSE-2.0
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import (
     "strings"
     "bytes"
     "strconv"
+    "encoding/json"
     "github.com/spf13/viper"
     "github.com/shirou/gopsutil/mem"
     "github.com/shirou/gopsutil/disk"
@@ -67,27 +68,6 @@ func main() {
        Transport: &transport,
     }
 
-    // UNIX system commands
-    kernelver := exec.Command("uname","-r")
-    kernelverout, err := kernelver.Output()
-    kernelverstring := string(kernelverout)
-    timezone := exec.Command("date","+%Z")
-    timezoneout, err := timezone.Output()
-    timezonestring := string(timezoneout)
-
-    hostname := exec.Command("hostname","-f")
-    hostcut := exec.Command("cut","-d.","-f","2-")
-    hostnameOut, err := hostname.StdoutPipe()
-    hostname.Start()
-    hostcut.Stdin = hostnameOut
-    domainname, err := hostcut.Output()
-    domainstring := string(domainname)
-
-    if err != nil {
-       fmt.Println(err.Error())
-       return
-    }
-
     v, _ := mem.VirtualMemory()
     k, _ := disk.DiskUsage("/")
     h, _ := host.HostInfo()
@@ -106,6 +86,37 @@ func main() {
     ipaddress, err := networkip.ExternalIP()
     if err != nil {
        fmt.Println(err.Error())
+    }
+
+    // UNIX system commands
+    rpmqa := exec.Command("rpm", "-qa")
+    rpmsort := exec.Command("sort")
+    rpmqaOut, err := rpmqa.StdoutPipe()
+    rpmqa.Start()
+    rpmsort.Stdin = rpmqaOut
+    rpmOut, err := rpmsort.Output()
+    rpmstring := string(rpmOut)
+    rpmoutputSlice := strings.Split(rpmstring,"\n")
+    rpmjs,_ := json.Marshal(rpmoutputSlice)
+
+    kernelver := exec.Command("uname","-r")
+    kernelverout, err := kernelver.Output()
+    kernelverstring := string(kernelverout)
+    timezone := exec.Command("date","+%Z")
+    timezoneout, err := timezone.Output()
+    timezonestring := string(timezoneout)
+
+    hostname := exec.Command("hostname","-f")
+    hostcut := exec.Command("cut","-d.","-f","2-")
+    hostnameOut, err := hostname.StdoutPipe()
+    hostname.Start()
+    hostcut.Stdin = hostnameOut
+    domainname, err := hostcut.Output()
+    domainstring := string(domainname)
+
+    if err != nil {
+       fmt.Println(err.Error())
+       return
     }
 
     // ElasticSearch endpoint
@@ -160,27 +171,30 @@ func main() {
        profile, err := http.Get("http://169.254.169.254/latest/meta-data/profile")
        defer profile.Body.Close()
        profileOut, err := ioutil.ReadAll(profile.Body)
+       publicip, err := http.Get("http://169.254.169.254/latest/meta-data/public-ipv4")
+       defer publicip.Body.Close()
+       publicipOut, err := ioutil.ReadAll(publicip.Body)
        if err != nil {
           fmt.Println(err.Error())
           return
        }
 
        aws := `
-       "ec2_ami_id": "%s",
-       "ec2_availability_zone": "%s",
-       "ec2_instance_id": "%s",
-       "ec2_instance_type": "%s",
-       "ec2_profile": "%s",
-       "ec2_security_groups": "%s",`
+    "ec2_ami_id": "%s",
+    "ec2_availability_zone": "%s",
+    "ec2_instance_id": "%s",
+    "ec2_instance_type": "%s",
+    "ec2_profile": "%s",
+    "ec2_public_ip4": "%s",
+    "ec2_security_groups": "%s",`
 
-       awsLine := fmt.Sprintf(aws, amiidOut, availabilityzoneOut, instanceidOut, instancetypeOut, profileOut, securitygroupsOut)
+       awsLine := fmt.Sprintf(aws, amiidOut, availabilityzoneOut, instanceidOut, instancetypeOut, profileOut, publicipOut, securitygroupsOut)
        writeAWS, err := io.WriteString(f, awsLine)
        if err != nil {
           fmt.Println(writeAWS, err)
           return
        }
     }
-
     bottom := `
     "hostname": "%s",
     "ipaddress": "%s",
@@ -191,7 +205,26 @@ func main() {
     "memoryfree": "%v",
     "memorytotal": "%v",
     "memoryused": "%v",
-    "os": "%v",
+    "os": "%v",`
+
+    bottomLine := fmt.Sprintf(bottom, h.Hostname, ipaddress, strings.TrimSpace(kernelverstring), loadfifteen[0], loadone[0], loadfive[0], v.Free, v.Total, memused[0], h.OS)
+    writeBottom, err := io.WriteString(f, bottomLine)
+    if err != nil {
+       fmt.Println(writeBottom, err)
+       return
+    }
+
+    packages :=`
+    "packages": %s,`
+
+    packagesLine := fmt.Sprintf(packages, string(rpmjs))
+    writePackages, err := io.WriteString(f, packagesLine)
+    if err != nil {
+       fmt.Println(writePackages, err)
+       return
+    }
+
+    last := `
     "platform": "%v",
     "platformfamily": "%v",
     "platformverison": "%v",
@@ -201,11 +234,10 @@ func main() {
     "virtualizationsystem": "%v"
   }`
 
-    bottomLine := fmt.Sprintf(bottom, h.Hostname, ipaddress, strings.TrimSpace(kernelverstring), loadfifteen[0], loadone[0], loadfive[0], v.Free, v.Total, memused[0], h.OS, h.Platform, h.PlatformFamily, h. PlatformVersion, strings.TrimSpace(timezonestring), h.Uptime, h.VirtualizationRole, h.VirtualizationSystem)
-
-    writeLine, err := io.WriteString(f, bottomLine)
+    lastLine := fmt.Sprintf(last, h.Platform, h.PlatformFamily, h. PlatformVersion, strings.TrimSpace(timezonestring), h.Uptime, h.VirtualizationRole, h.VirtualizationSystem)
+    writeLast, err := io.WriteString(f, lastLine)
     if err != nil {
-       fmt.Println(writeLine, err)
+       fmt.Println(writeLast, err)
        return
     }
 
@@ -219,7 +251,7 @@ func main() {
           fmt.Println(err.Error())
           return
        }
-       fmt.Println("ElasticSearch EndPoint:", elastic_url)   
+       fmt.Println("ElasticSearch EndPoint:", elastic_url)
        reqDelete, err := http.NewRequest("DELETE", elastic_url, nil)
        respDelete, err := http.DefaultClient.Do(reqDelete)
        fmt.Println("Delete ElasticSearch Type Status:", respDelete.Status)
@@ -232,7 +264,7 @@ func main() {
           fmt.Println(err.Error())
        }
        defer respPost.Body.Close()
- 
+
        fmt.Println("POST JSON ElasticSearch Type Status:", respPost.Status)
        postBody, _ := ioutil.ReadAll(respPost.Body)
        fmt.Println("POST Response Body:", string(postBody))
