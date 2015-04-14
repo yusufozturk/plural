@@ -36,7 +36,7 @@ import (
 var timeout = time.Duration(300 * time.Millisecond)
 
 func dialTimeout(network, addr string) (net.Conn, error) {
-	return net.DialTimeout(network, addr, timeout)
+        return net.DialTimeout(network, addr, timeout)
 }
 
 func main() {
@@ -45,7 +45,7 @@ func main() {
 
     // Configuration file settings using key-value
     viper.SetConfigName("plural")
-    viper.AddConfigPath("/")
+    viper.AddConfigPath("/opt/plural/conf")
     err := viper.ReadInConfig()
     if err != nil {
        fmt.Println("No Configuration File Using DEFAULTS")
@@ -264,7 +264,6 @@ func main() {
           fmt.Println(err.Error())
        }
        defer respPost.Body.Close()
-
        fmt.Println("POST JSON ElasticSearch Type Status:", respPost.Status)
        postBody, _ := ioutil.ReadAll(respPost.Body)
        fmt.Println("POST Response Body:", string(postBody))
