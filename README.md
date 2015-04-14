@@ -6,7 +6,7 @@ Linux agent to send host-based facts about the server to ElasticSearch and Kiban
 
 **Overview:**
 
-Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs on high disk usage/CPU utilization, kernel versions, platforms, AWS inventory, etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
+Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs on high disk usage/CPU utilization, kernel versions, AWS inventory, query installed packages, etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
 
 ElasticSearch terminology:
 
@@ -73,41 +73,63 @@ The agent runs every five minutes, it will delete the host out of the environmen
 **Example JSON Output:**
 
     {
-        "diskfree": "6833799168",
-        "disktotal": "8454070272",
-        "diskused": "19",
-        "domain": "ec2.internal",
-        "ec2_ami_id": "ami-bc8131d4",
-        "ec2_availability_zone": "us-east-1b",
-        "ec2_instance_id": "i-1b8cc9cc",
-        "ec2_instance_type": "t1.micro",
-        "ec2_profile": "default-paravirtual",
-        "ec2_security_groups": "default",
-        "hostname": "ip-10-28-229-205",
-        "ipaddress": "10.28.229.205",
-        "kernelversion": "2.6.32-431.29.2.el6.x86_64",
-        "load15": "3",
-        "load1": "3",
-        "load5": "3",
-        "memoryfree": "129888000",
-        "memorytotal": "604480000",
-        "memoryused": "63",
-        "os": "linux",
-        "platform": "centos",
-        "platformfamily": "rhel",
-        "platformverison": "6.5",
-        "timezone": "UTC",
-        "uptime": "6168",
-        "virtualizationrole": "guest",
-        "virtualizationsystem": "xen"
+       "diskfree": "6797950976",
+       "disktotal": "8454070272",
+       "diskused": "19",
+       "domain": "ec2.internal",
+       "ec2_ami_id": "ami-bc8131d4",
+       "ec2_availability_zone": "us-east-1b",
+       "ec2_instance_id": "i-1b8cc9cc",
+       "ec2_instance_type": "t1.micro",
+       "ec2_profile": "default-paravirtual",
+       "ec2_public_ip4": "54.145.182.91",
+       "ec2_security_groups": "default",
+       "hostname": "ip-10-28-229-205",
+       "ipaddress": "10.28.229.205",
+       "kernelversion": "2.6.32-431.29.2.el6.x86_64",
+       "load15": "0",
+       "load1": "0",
+       "load5": "0",
+       "memoryfree": "134880000",
+       "memorytotal": "604480000",
+       "memoryused": "66",
+       "os": "linux",
+       "packages": [
+         "acl-2.2.49-6.el6.x86_64",
+         "acpid-1.0.10-2.1.el6.x86_64",
+         "alsa-lib-1.0.22-3.el6.x86_64",
+         "atk-1.30.0-1.el6.x86_64",
+         "attr-2.4.44-7.el6.x86_64",
+         "audit-2.2-4.el6_5.x86_64",
+         "audit-libs-2.2-4.el6_5.x86_64",
+         "authconfig-6.1.12-13.el6.x86_64",
+         "avahi-libs-0.6.25-15.el6.x86_64",
+         "b43-openfwwf-5.2-4.el6.noarch",
+         "basesystem-10.0-4.el6.noarch",
+         "bash-4.1.2-15.el6_5.2.x86_64",
+         "binutils-2.20.51.0.2-5.36.el6.x86_64",
+         "bzip2-1.0.5-7.el6_0.x86_64",
+         "bzip2-libs-1.0.5-7.el6_0.x86_64",
+         "ca-certificates-2014.1.98-65.0.el6_5.noarch",
+         "cairo-1.8.8-3.1.el6.x86_64",
+         "centos-release-6-5.el6.centos.11.2.x86_64",
+         ""
+       ],
+       "platform": "centos",
+       "platformfamily": "rhel",
+       "platformverison": "6.5",
+       "timezone": "UTC",
+       "uptime": "351730",
+       "virtualizationrole": "guest",
+       "virtualizationsystem": "xen"
     }
-
   
 ----------
 
 **Tested Againsted:**
 
  - CentOS/RHEL 6.x
+ - Fedora 20
  - Mac OS X 13.4.0
 
 ----------
