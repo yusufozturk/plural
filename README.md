@@ -35,6 +35,33 @@ The agent runs every five minutes, it will delete the host out of the environmen
  - Java 7.x / OpenJDK 7
  - Kibana
 
+
+ **Last step is configure ElasticSearch mappings for all indexes to not analyzed:**
+ 
+
+       curl -XPUT localhost:9200/_template/template_1 -d '
+       {
+         "template" : "*",
+         "settings" : {
+         "index.refresh_interval" : "5s"
+       },
+       "mappings" : {
+          "_default_" : {
+          "_all" : {"enabled" : true},
+          "dynamic_templates" : [ {
+         "string_fields" : {
+          "match" : "*",
+          "match_mapping_type" : "string",
+          "mapping" : {
+          "type" : "string", "index" : "not_analyzed", "omit_norms" : true
+          }
+         }
+        }]
+       }
+       }
+       }'
+
+
 *Client:*
 
  - Packages coming soon, for now `go build` project
@@ -141,3 +168,4 @@ The agent runs every five minutes, it will delete the host out of the environmen
 ![Dashboard Widgets](https://s3.amazonaws.com/timski-pictures/dashboard.png)
 
 ![Kernel Search](https://s3.amazonaws.com/timski-pictures/kernel-search.png)
+
