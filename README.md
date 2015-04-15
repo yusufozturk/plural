@@ -165,7 +165,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
 
 **Screenshots**
 
-![Dashboard Widgets](https://s3.amazonaws.com/timski-pictures/dashboard.png)
+![Dashboard View](https://s3.amazonaws.com/timski-pictures/dashview.png)
 
-![Kernel Search](https://s3.amazonaws.com/timski-pictures/kernel-search.png)
+![Search View](https://s3.amazonaws.com/timski-pictures/searchview.png)
 
