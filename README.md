@@ -65,7 +65,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
 *Client:*
 
  - Packages coming soon, for now `go build` project
- - mkdir -p /opt/plural/{bin,conf}
+ - `mkdir -p /opt/plural/{bin,conf}`
  - Move compiled binary to /opt/plural/bin/
 
 ----------
