@@ -30,6 +30,7 @@ import (
     "github.com/shirou/gopsutil/host"
     "github.com/shirou/gopsutil/load"
     "github.com/dustin/go-humanize"
+    "github.com/fsouza/go-dockerclient"
     "plural/networkip"
 )
 
@@ -43,6 +44,10 @@ func dialTimeout(network, addr string) (net.Conn, error) {
 func main() {
 
   for {
+
+    // Docker client remote API
+    endpoint := "unix:///var/run/docker.sock"
+    dockerClient, _ := docker.NewClient(endpoint)
 
     // Configuration file settings using key-value
     viper.SetConfigName("plural")
@@ -118,6 +123,8 @@ func main() {
     dpkgoutputSlice := strings.Split(dpkgstring,"\n")
     dpkgjs,_ := json.Marshal(dpkgoutputSlice)
 
+    dockerbin := exec.Command("which", "docker")
+    dockerbinout, err := dockerbin.Output()
 
     kernelver := exec.Command("uname","-r")
     kernelverout, err := kernelver.Output()
@@ -159,13 +166,48 @@ func main() {
     top := `
     "diskfree": "%v",
     "disktotal": "%v",
-    "diskused": "%v",
-    "domain": "%s",`
+    "diskused": "%v",`
 
-    topLine := fmt.Sprintf(top, diskfree, disktotal, diskusedprct, strings.TrimSpace(domainstring))
+    topLine := fmt.Sprintf(top, diskfree, disktotal, diskusedprct)
     writeTop, err := io.WriteString(f, topLine)
     if err != nil {
        fmt.Println(writeTop, err)
+       return
+    }
+
+    if string(dockerbinout) != "" {
+       dockerRaw :=`
+       "docker": %s,`
+       containers, _ := dockerClient.ListContainers(docker.ListContainersOptions{All: false})
+       dockerString := `[`
+
+       for _, container := range containers {
+         portsRaw := `%v`
+         portsString := fmt.Sprintf(portsRaw, container.Ports)
+         portsReplace := strings.Replace(portsString, "{", "", -1)
+         portsReplace2 := strings.Replace(portsReplace, "}", "", -1)
+         portsReplace3 := strings.Replace(portsReplace2, "[", "'", -1)
+         portsReplace4 := strings.Replace(portsReplace3, "]", "'", -1)
+         containerString :=`"%v, %v, %v",`
+         dockerString += fmt.Sprintf(containerString, container.Image, container.Command, portsReplace4)
+       }
+       dockerString += `""]`
+
+       dockerLine := fmt.Sprintf(dockerRaw, dockerString)
+       writeDocker, err := io.WriteString(f, dockerLine)
+       if err != nil {
+          fmt.Println(writeDocker, err)
+          return
+       }
+    }
+
+    domain := `
+    "domain": "%s",`
+
+    domainLine := fmt.Sprintf(domain, strings.TrimSpace(domainstring))
+    writeDomain, err := io.WriteString(f, domainLine)
+    if err != nil {
+       fmt.Println(writeDomain, err)
        return
     }
 
