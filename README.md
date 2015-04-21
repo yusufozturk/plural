@@ -6,7 +6,7 @@ Linux agent to send host-based facts about the server to ElasticSearch and Kiban
 
 **Overview:**
 
-Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs on high disk usage/CPU utilization, kernel versions, AWS inventory, query installed packages, etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
+Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs on high disk usage/CPU utilization, kernel versions, Docker inventory, AWS inventory, query installed packages, etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
 
 ElasticSearch terminology:
 
@@ -75,6 +75,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
     go get github.com/spf13/viper
     go get github.com/shirou/gopsutil
     go get github.com/dustin/go-humanize
+    go get github.com/fsouza/go-dockerclient
 
 ----------
 
@@ -104,6 +105,14 @@ The agent runs every five minutes, it will delete the host out of the environmen
        "diskfree": "6.7GB",
        "disktotal": "8.5GB",
        "diskused": "19",
+       "docker": [
+         "dockerui/dockerui:latest, ./dockerui, '9000 9000 tcp 0.0.0.0'",
+         "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '",
+         "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '",
+         "robloach/forge-lamp:latest, supervisord, '22 49159 tcp 0.0.0.0 3306 49160 tcp 0.0.0.0 80 49161 tcp 0.0.0.0'",
+         "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '",
+         ""
+       ],
        "domain": "ec2.internal",
        "ec2_ami_id": "ami-bc8131d4",
        "ec2_availability_zone": "us-east-1b",
@@ -169,3 +178,4 @@ The agent runs every five minutes, it will delete the host out of the environmen
 
 ![Search View](https://s3.amazonaws.com/timski-pictures/searchview.png)
 
+![Docker View](https://s3.amazonaws.com/timski-pictures/dockerview.png)
