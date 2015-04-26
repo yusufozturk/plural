@@ -6,7 +6,7 @@ Linux agent to send host-based facts about the server to ElasticSearch and Kiban
 
 **Overview:**
 
-Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs/lists on high disk usage/CPU utilization, kernel versions, Docker containers, TCP4 listening ports, AWS inventory, installed packages (yum, dpkg, pip, gem), etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
+Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs/lists on high disk usage/CPU utilization, kernel versions, Docker containers, TCP4 listening ports, AWS inventory, installed packages (rpm, dpkg, pip, gem), etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
 
 ElasticSearch terminology:
 
