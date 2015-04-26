@@ -36,7 +36,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
  - Kibana
 
 
- **Last step is configure ElasticSearch mappings for all indexes to not analyzed:**
+ **Last step is configure ElasticSearch mappings for all indexes to not be analyzed:**
  
 
        curl -XPUT localhost:9200/_template/template_1 -d '
