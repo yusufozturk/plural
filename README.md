@@ -76,6 +76,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
     go get github.com/shirou/gopsutil
     go get github.com/dustin/go-humanize
     go get github.com/fsouza/go-dockerclient
+    go get github.com/drael/GOnetstat
 
 ----------
 
