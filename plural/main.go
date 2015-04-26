@@ -127,6 +127,33 @@ func main() {
     dockerbin := exec.Command("which", "docker")
     dockerbinout, err := dockerbin.Output()
 
+    pipbin := exec.Command("which", "pip")
+    pipbinout, err := pipbin.Output()
+    pipfree := exec.Command("pip", "freeze")
+    pipsort := exec.Command("sort")
+    pipfreeOut, err := pipfree.StdoutPipe()
+    pipfree.Start()
+    pipsort.Stdin = pipfreeOut
+    pipOut, err := pipsort.Output()
+    pipstring := string(pipOut)
+    pipreplace := strings.Replace(pipstring, "==", "-", -1)
+    pipoutSlice := strings.Split(pipreplace,"\n")
+    pipjs,_ := json.Marshal(pipoutSlice)
+
+    gembin := exec.Command("which", "gem")
+    gembinout, err := gembin.Output()
+    gemlist := exec.Command("gem", "list")
+    gemgrep := exec.Command("grep", "^[a-zA-Z]")
+    gemlistOut, err := gemlist.StdoutPipe()
+    gemlist.Start()
+    gemgrep.Stdin = gemlistOut
+    gemOut, err := gemgrep.Output()
+    gemstring := string(gemOut)
+    gemreplace := strings.Replace(gemstring, " (", "-", -1)
+    gemreplace2 := strings.Replace(gemreplace, ")", "", -1)
+    gemoutSlice := strings.Split(gemreplace2,"\n")
+    gemjs,_ := json.Marshal(gemoutSlice)
+
     kernelver := exec.Command("uname","-r")
     kernelverout, err := kernelver.Output()
     kernelverstring := string(kernelverout)
@@ -257,6 +284,19 @@ func main() {
           return
        }
     }
+
+    if string(gembinout) != "" {
+       gem :=`
+    "gem": %s,`
+
+       gemLine := fmt.Sprintf(gem, string(gemjs))
+       writeGem, err := io.WriteString(f, gemLine)
+       if err != nil {
+          fmt.Println(writeGem, err)
+          return
+       }
+    }
+
     bottom := `
     "hostname": "%s",
     "ipaddress": "%s",
@@ -292,7 +332,7 @@ func main() {
 
     if string(dpkgbinout) != "" {
        packages :=`
-       "packages": %s,`
+    "packages": %s,`
 
        dpkgLine := fmt.Sprintf(packages, string(dpkgjs))
        writeDpkg, err := io.WriteString(f, dpkgLine)
@@ -302,15 +342,27 @@ func main() {
        }
     }
 
-     gonetstat := GOnetstat.Tcp()
-     tcpString := `[`
-     for _, nettcp := range(gonetstat) {
-        if nettcp.State == "LISTEN" {
-            ip_port := fmt.Sprintf("%v:%v", nettcp.Ip, nettcp.Port)
-            pid_program := fmt.Sprintf("%v", nettcp.Exe)
-            ippidString :=`"%v %v",`
-            tcpString += fmt.Sprintf(ippidString, ip_port, pid_program)
-         }
+    if string(pipbinout) != "" {
+       pip :=`
+    "pip": %s,`
+
+       pipLine := fmt.Sprintf(pip, string(pipjs))
+       writePip, err := io.WriteString(f, pipLine)
+       if err != nil {
+          fmt.Println(writePip, err)
+          return
+       }
+    }
+
+    gonetstat := GOnetstat.Tcp()
+    tcpString := `[`
+    for _, nettcp := range(gonetstat) {
+       if nettcp.State == "LISTEN" {
+          ip_port := fmt.Sprintf("%v:%v", nettcp.Ip, nettcp.Port)
+          pid_program := fmt.Sprintf("%v", nettcp.Exe)
+          ippidString :=`"%v %v",`
+          tcpString += fmt.Sprintf(ippidString, ip_port, pid_program)
+       }
     }
     tcpString += `""]`
 
