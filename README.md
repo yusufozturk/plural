@@ -6,7 +6,7 @@ Linux agent to send host-based facts about the server to ElasticSearch and Kiban
 
 **Overview:**
 
-Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs on high disk usage/CPU utilization, kernel versions, Docker inventory, AWS inventory, query installed packages, etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
+Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs on high disk usage/CPU utilization, kernel versions, Docker containers, ports listening, AWS inventory, query installed packages, etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
 
 ElasticSearch terminology:
 
@@ -155,6 +155,15 @@ The agent runs every five minutes, it will delete the host out of the environmen
        "platform": "centos",
        "platformfamily": "rhel",
        "platformverison": "6.5",
+       "tcp4_listen": [
+         "0.0.0.0:9200 /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64/jre/bin/java",
+         "0.0.0.0:8080 /usr/bin/python",
+         "0.0.0.0:80 /opt/kibana-4.0.2-linux-x64/node/bin/node",
+         "0.0.0.0:9300 /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64/jre/bin/java",
+         "0.0.0.0:22 /usr/sbin/sshd",
+         "127.0.0.1:25 /usr/libexec/postfix/master",
+         ""
+       ],
        "timezone": "UTC",
        "uptime": "351730",
        "virtualizationrole": "guest",
