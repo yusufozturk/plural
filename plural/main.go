@@ -31,6 +31,7 @@ import (
     "github.com/shirou/gopsutil/load"
     "github.com/dustin/go-humanize"
     "github.com/fsouza/go-dockerclient"
+    "github.com/drael/GOnetstat"
     "plural/networkip"
 )
 
@@ -177,7 +178,7 @@ func main() {
 
     if string(dockerbinout) != "" {
        dockerRaw :=`
-       "docker": %s,`
+    "docker": %s,`
        containers, _ := dockerClient.ListContainers(docker.ListContainersOptions{All: false})
        dockerString := `[`
 
@@ -279,7 +280,7 @@ func main() {
 
     if string(rpmbinout) != "" {
        packages :=`
-       "packages": %s,`
+    "packages": %s,`
 
        rpmLine := fmt.Sprintf(packages, string(rpmjs))
        writeRpm, err := io.WriteString(f, rpmLine)
@@ -301,17 +302,39 @@ func main() {
        }
     }
 
-    last := `
+     gonetstat := GOnetstat.Tcp()
+     tcpString := `[`
+     for _, nettcp := range(gonetstat) {
+        if nettcp.State == "LISTEN" {
+            ip_port := fmt.Sprintf("%v:%v", nettcp.Ip, nettcp.Port)
+            pid_program := fmt.Sprintf("%v", nettcp.Exe)
+            ippidString :=`"%v %v",`
+            tcpString += fmt.Sprintf(ippidString, ip_port, pid_program)
+         }
+    }
+    tcpString += `""]`
+
+    beforeLast := `
     "platform": "%v",
     "platformfamily": "%v",
     "platformverison": "%v",
+    "tcp4_listen": %v,`
+
+    beforeLastLine := fmt.Sprintf(beforeLast, h.Platform, h.PlatformFamily, h. PlatformVersion, tcpString)
+    writeBeforeLast, err := io.WriteString(f, beforeLastLine)
+    if err != nil {
+       fmt.Println(writeBeforeLast, err)
+       return
+    }
+
+    last := `
     "timezone": "%s",
     "uptime": "%v",
     "virtualizationrole": "%v",
     "virtualizationsystem": "%v"
   }`
 
-    lastLine := fmt.Sprintf(last, h.Platform, h.PlatformFamily, h. PlatformVersion, strings.TrimSpace(timezonestring), h.Uptime, h.VirtualizationRole, h.VirtualizationSystem)
+    lastLine := fmt.Sprintf(last, strings.TrimSpace(timezonestring), h.Uptime, h.VirtualizationRole, h.VirtualizationSystem)
     writeLast, err := io.WriteString(f, lastLine)
     if err != nil {
        fmt.Println(writeLast, err)
