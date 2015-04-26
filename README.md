@@ -6,7 +6,7 @@ Linux agent to send host-based facts about the server to ElasticSearch and Kiban
 
 **Overview:**
 
-Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs on high disk usage/CPU utilization, kernel versions, Docker containers, ports listening, AWS inventory, query installed packages, etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
+Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs/lists on high disk usage/CPU utilization, kernel versions, Docker containers, TCP4 listening ports, AWS inventory, installed packages (yum, dpkg, pip, gem), etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
 
 ElasticSearch terminology:
 
@@ -122,6 +122,17 @@ The agent runs every five minutes, it will delete the host out of the environmen
        "ec2_profile": "default-paravirtual",
        "ec2_public_ip4": "54.145.182.91",
        "ec2_security_groups": "default",
+       "gem": [
+         "arr-pm-0.0.9",
+         "backports-3.6.4",
+         "cabin-0.7.1",
+         "childprocess-0.5.6",
+         "clamp-0.6.4",
+         "ffi-1.9.8",
+         "fpm-1.3.3",
+         "json-1.8.2",
+         ""
+       ],
        "hostname": "ip-10-28-229-205",
        "ipaddress": "10.28.229.205",
        "kernelversion": "2.6.32-431.29.2.el6.x86_64",
@@ -151,6 +162,30 @@ The agent runs every five minutes, it will delete the host out of the environmen
          "ca-certificates-2014.1.98-65.0.el6_5.noarch",
          "cairo-1.8.8-3.1.el6.x86_64",
          "centos-release-6-5.el6.centos.11.2.x86_64",
+         ""
+       ],
+       "pip": [
+         "distribute-0.6.10",
+         "Flask-0.10.1",
+         "Flask-Limiter-0.7.4",
+         "Flask-SSLify-0.1.4",
+         "gunicorn-19.1.1",
+         "iniparse-0.3.1",
+         "itsdangerous-0.24",
+         "Jinja2-2.7.3",
+         "limits-1.0.4",
+         "MarkupSafe-0.23",
+         "pycurl-7.19.0",
+         "pygpgme-0.1",
+         "pyOpenSSL-0.14",
+         "python-magic-0.4.6",
+         "PyYAML-3.11",
+         "six-1.9.0",
+         "SQLAlchemy-0.9.8",
+         "urlgrabber-3.9.1",
+         "Werkzeug-0.10.4",
+         "yum-metadata-parser-1.1.2",
+         "yum-presto-0.4.4",
          ""
        ],
        "platform": "centos",
