@@ -1,6 +1,6 @@
 # plural
 
-Linux agent to send host-based facts about the server to ElasticSearch and Kibana
+Linux agent to send host-based information about the server to ElasticSearch and Kibana
 
 ----------
 
