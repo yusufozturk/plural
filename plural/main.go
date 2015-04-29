@@ -386,7 +386,7 @@ func main() {
     "virtualizationsystem": "%v"
   }`
 
-    lastLine := fmt.Sprintf(last, strings.TrimSpace(timezonestring), h.Uptime, h.VirtualizationRole, h.VirtualizationSystem)
+    lastLine := fmt.Sprintf(last, strings.TrimSpace(timezonestring), time.Duration(h.Uptime) * time.Second, h.VirtualizationRole, h.VirtualizationSystem)
     writeLast, err := io.WriteString(f, lastLine)
     if err != nil {
        fmt.Println(writeLast, err)
