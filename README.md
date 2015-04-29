@@ -201,7 +201,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
          ""
        ],
        "timezone": "UTC",
-       "uptime": "351730",
+       "uptime": "471h18m59s",
        "virtualizationrole": "guest",
        "virtualizationsystem": "xen"
     }
