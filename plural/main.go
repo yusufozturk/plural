@@ -285,6 +285,16 @@ func main() {
        }
     }
 
+    environmentOut :=`
+    "environment": "%s",`
+
+    envLine := fmt.Sprintf(environmentOut, environment)
+    writeEnv, err := io.WriteString(f, envLine)
+    if err != nil {
+       fmt.Println(writeEnv, err)
+       return
+    }
+
     if string(gembinout) != "" {
        gem :=`
     "gem": %s,`
