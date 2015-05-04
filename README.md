@@ -122,6 +122,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
        "ec2_profile": "default-paravirtual",
        "ec2_public_ip4": "54.145.182.91",
        "ec2_security_groups": "default",
+       "environment": "dev",
        "gem": [
          "arr-pm-0.0.9",
          "backports-3.6.4",
