@@ -1,13 +1,14 @@
 #!/bin/sh
 #
-# plural   This scripts turns plural on
+# plural       This scripts turns plural on
 #
-# Author:       Tim Marcinowski <marshyski@gmail.com>
+# Author:      Tim Marcinowski <marshyski@gmail.com>
 #
-# chkconfig:	- 95 04
+# chkconfig:	  - 95 04
 #
 # processname:  plural
 # config: /opt/plural/conf/plural.yaml
+# pidfile: /var/run/plural.pid
 #
 
 # source function library
@@ -47,10 +48,14 @@ case "$1" in
   stop)
     stop
     ;;
+  status)
+    status plural
+    RETVAL=$?
+    ;;
   retart)
     stop
     start
     ;;
   *)
-    echo "Usage: $0 {start|stop|restart}"
+    echo "Usage: $0 {start|status|stop|restart}"
 esac
