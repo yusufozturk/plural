@@ -364,25 +364,38 @@ func main() {
        }
     }
 
-    gonetstat := GOnetstat.Tcp()
-    tcpString := `[`
-    for _, nettcp := range(gonetstat) {
+    gonetstat4 := GOnetstat.Tcp()
+    tcp4String := `[`
+    for _, nettcp := range(gonetstat4) {
        if nettcp.State == "LISTEN" {
           ip_port := fmt.Sprintf("%v:%v", nettcp.Ip, nettcp.Port)
           pid_program := fmt.Sprintf("%v", nettcp.Exe)
           ippidString :=`"%v %v",`
-          tcpString += fmt.Sprintf(ippidString, ip_port, pid_program)
+          tcp4String += fmt.Sprintf(ippidString, ip_port, pid_program)
        }
     }
-    tcpString += `""]`
+    tcp4String += `""]`
+
+    gonetstat6 := GOnetstat.Tcp6()
+    tcp6String := `[`
+    for _, nettcp := range(gonetstat6) {
+       if nettcp.State == "LISTEN" {
+          ip_port := fmt.Sprintf("%v:%v", nettcp.Ip, nettcp.Port)
+          pid_program := fmt.Sprintf("%v", nettcp.Exe)
+          ippidString :=`"%v %v",`
+          tcp6String += fmt.Sprintf(ippidString, ip_port, pid_program)
+       }
+    }
+    tcp6String += `""]`
 
     beforeLast := `
     "platform": "%v",
     "platformfamily": "%v",
     "platformverison": "%v",
-    "tcp4_listen": %v,`
+    "tcp4_listen": %v,
+    "tcp6_listen": %v,`
 
-    beforeLastLine := fmt.Sprintf(beforeLast, h.Platform, h.PlatformFamily, h. PlatformVersion, tcpString)
+    beforeLastLine := fmt.Sprintf(beforeLast, h.Platform, h.PlatformFamily, h. PlatformVersion, tcp4String, tcp6String)
     writeBeforeLast, err := io.WriteString(f, beforeLastLine)
     if err != nil {
        fmt.Println(writeBeforeLast, err)
