@@ -201,6 +201,16 @@ The agent runs every five minutes, it will delete the host out of the environmen
          "127.0.0.1:25 /usr/libexec/postfix/master",
          ""
        ],
+       "tcp6_listen": [
+         "0000:0000:0000:0000:0000:0000:0001:0000:25 /usr/libexec/postfix/master",
+         "0000:0000:0000:0000:0000:0000:0000:0000:8090 /opt/influxdb/versions/0.8.8/influxdb",
+         "0000:0000:0000:0000:0000:0000:0000:0000:8099 /opt/influxdb/versions/0.8.8/influxdb",
+         "0000:0000:0000:0000:0000:0000:0000:0000:8083 /opt/influxdb/versions/0.8.8/influxdb",
+         "0000:0000:0000:0000:0000:0000:0000:0000:8086 /opt/influxdb/versions/0.8.8/influxdb",
+         "0000:0000:0000:0000:0000:0000:0000:0000:22 /usr/sbin/sshd",
+         "0000:0000:0000:0000:0000:0000:0000:0000:3000 /usr/sbin/grafana-server",
+         ""
+       ],
        "timezone": "UTC",
        "uptime": "471h18m59s",
        "virtualizationrole": "guest",
