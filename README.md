@@ -111,8 +111,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
          "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '",
          "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '",
          "robloach/forge-lamp:latest, supervisord, '22 49159 tcp 0.0.0.0 3306 49160 tcp 0.0.0.0 80 49161 tcp 0.0.0.0'",
-         "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '",
-         ""
+         "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '"
        ],
        "domain": "ec2.internal",
        "ec2_ami_id": "ami-bc8131d4",
@@ -131,8 +130,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
          "clamp-0.6.4",
          "ffi-1.9.8",
          "fpm-1.3.3",
-         "json-1.8.2",
-         ""
+         "json-1.8.2"
        ],
        "hostname": "ip-10-28-229-205",
        "ipaddress": "10.28.229.205",
@@ -162,8 +160,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
          "bzip2-libs-1.0.5-7.el6_0.x86_64",
          "ca-certificates-2014.1.98-65.0.el6_5.noarch",
          "cairo-1.8.8-3.1.el6.x86_64",
-         "centos-release-6-5.el6.centos.11.2.x86_64",
-         ""
+         "centos-release-6-5.el6.centos.11.2.x86_64"
        ],
        "pip": [
          "distribute-0.6.10",
@@ -186,8 +183,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
          "urlgrabber-3.9.1",
          "Werkzeug-0.10.4",
          "yum-metadata-parser-1.1.2",
-         "yum-presto-0.4.4",
-         ""
+         "yum-presto-0.4.4"
        ],
        "platform": "centos",
        "platformfamily": "rhel",
@@ -198,8 +194,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
          "0.0.0.0:80 /opt/kibana-4.0.2-linux-x64/node/bin/node",
          "0.0.0.0:9300 /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64/jre/bin/java",
          "0.0.0.0:22 /usr/sbin/sshd",
-         "127.0.0.1:25 /usr/libexec/postfix/master",
-         ""
+         "127.0.0.1:25 /usr/libexec/postfix/master"
        ],
        "tcp6_listen": [
          "0000:0000:0000:0000:0000:0000:0001:0000:25 /usr/libexec/postfix/master",
@@ -208,8 +203,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
          "0000:0000:0000:0000:0000:0000:0000:0000:8083 /opt/influxdb/versions/0.8.8/influxdb",
          "0000:0000:0000:0000:0000:0000:0000:0000:8086 /opt/influxdb/versions/0.8.8/influxdb",
          "0000:0000:0000:0000:0000:0000:0000:0000:22 /usr/sbin/sshd",
-         "0000:0000:0000:0000:0000:0000:0000:0000:3000 /usr/sbin/grafana-server",
-         ""
+         "0000:0000:0000:0000:0000:0000:0000:0000:3000 /usr/sbin/grafana-server"
        ],
        "timezone": "UTC",
        "uptime": "471h18m59s",
