@@ -135,6 +135,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
        "hostname": "ip-10-28-229-205",
        "ipaddress": "10.28.229.205",
        "kernelversion": "2.6.32-431.29.2.el6.x86_64",
+       "lastrun": "2015-05-21T17:54",
        "load15": "0",
        "load1": "0",
        "load5": "0",
