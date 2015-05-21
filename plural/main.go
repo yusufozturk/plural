@@ -222,7 +222,8 @@ func main() {
        dockerString += `""]`
 
        dockerLine := fmt.Sprintf(dockerRaw, dockerString)
-       writeDocker, err := io.WriteString(f, dockerLine)
+       dockerReplace := strings.Replace(dockerLine, ",\"\"]", "]", -1)
+       writeDocker, err := io.WriteString(f, dockerReplace)
        if err != nil {
           fmt.Println(writeDocker, err)
           return
@@ -300,7 +301,8 @@ func main() {
     "gem": %s,`
 
        gemLine := fmt.Sprintf(gem, string(gemjs))
-       writeGem, err := io.WriteString(f, gemLine)
+       gemReplace := strings.Replace(gemLine, ",\"\"]", "]", -1)
+       writeGem, err := io.WriteString(f, gemReplace)
        if err != nil {
           fmt.Println(writeGem, err)
           return
@@ -331,9 +333,9 @@ func main() {
     if string(rpmbinout) != "" {
        packages :=`
     "packages": %s,`
-
        rpmLine := fmt.Sprintf(packages, string(rpmjs))
-       writeRpm, err := io.WriteString(f, rpmLine)
+       rpmReplace := strings.Replace(rpmLine, ",\"\"]", "]", -1)
+       writeRpm, err := io.WriteString(f, rpmReplace)
        if err != nil {
           fmt.Println(writeRpm, err)
           return
@@ -357,7 +359,8 @@ func main() {
     "pip": %s,`
 
        pipLine := fmt.Sprintf(pip, string(pipjs))
-       writePip, err := io.WriteString(f, pipLine)
+       pipReplace := strings.Replace(pipLine, ",\"\"]", "]", -1)
+       writePip, err := io.WriteString(f, pipReplace)
        if err != nil {
           fmt.Println(writePip, err)
           return
@@ -375,6 +378,7 @@ func main() {
        }
     }
     tcp4String += `""]`
+    tcp4Replace := strings.Replace(tcp4String, ",\"\"]", "]", -1)
 
     gonetstat6 := GOnetstat.Tcp6()
     tcp6String := `[`
@@ -387,6 +391,7 @@ func main() {
        }
     }
     tcp6String += `""]`
+    tcp6Replace := strings.Replace(tcp6String, ",\"\"]", "]", -1)
 
     beforeLast := `
     "platform": "%v",
@@ -395,7 +400,7 @@ func main() {
     "tcp4_listen": %v,
     "tcp6_listen": %v,`
 
-    beforeLastLine := fmt.Sprintf(beforeLast, h.Platform, h.PlatformFamily, h. PlatformVersion, tcp4String, tcp6String)
+    beforeLastLine := fmt.Sprintf(beforeLast, h.Platform, h.PlatformFamily, h. PlatformVersion, tcp4Replace, tcp6Replace)
     writeBeforeLast, err := io.WriteString(f, beforeLastLine)
     if err != nil {
        fmt.Println(writeBeforeLast, err)
