@@ -87,6 +87,8 @@ func main() {
     diskusedprct := strings.Split(diskusedprctConv, ".")[0]
     diskfree := humanize.Bytes(k.Free)
     disktotal := humanize.Bytes(k.Total)
+    t := time.Now()
+    lastrun := fmt.Sprintf("%d-%02d-%02dT%02d:%02d", t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute())
     loadoneConv := strconv.FormatFloat(l.Load1, 'f', 6, 64)
     loadone := strings.Split(loadoneConv, ".")[0]
     loadfifteenConv := strconv.FormatFloat(l.Load15, 'f', 6, 64)
@@ -313,6 +315,7 @@ func main() {
     "hostname": "%s",
     "ipaddress": "%s",
     "kernelversion": "%s",
+    "lastrun": "%s",
     "load15": "%v",
     "load1": "%v",
     "load5": "%v",
@@ -322,7 +325,7 @@ func main() {
     "os": "%v",`
 
 
-    bottomLine := fmt.Sprintf(bottom, h.Hostname, ipaddress, strings.TrimSpace(kernelverstring), loadfifteen, loadone, loadfive, memfree, memtotal, memusedprct, h.OS)
+    bottomLine := fmt.Sprintf(bottom, h.Hostname, ipaddress, strings.TrimSpace(kernelverstring), lastrun, loadfifteen, loadone, loadfive, memfree, memtotal, memusedprct, h.OS)
     writeBottom, err := io.WriteString(f, bottomLine)
     if err != nil {
        fmt.Println(writeBottom, err)
