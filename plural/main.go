@@ -114,6 +114,18 @@ func main() {
     dnsoutputSlice := strings.Split(dnsstring,"\n")
     dnsjs,_ := json.Marshal(dnsoutputSlice)
 
+    wbin := exec.Command("ls", "/usr/bin/w")
+    wbinout, err := wbin.Output()
+    wh := exec.Command("w", "-h")
+    whawk := exec.Command("awk", "{print$1\"-\"$2}")
+    whOut, err := wh.StdoutPipe()
+    wh.Start()
+    whawk.Stdin = whOut
+    wOut, err := whawk.Output()
+    whstring := string(wOut)
+    whoutputSlice := strings.Split(whstring,"\n")
+    whjs,_ := json.Marshal(whoutputSlice)
+
     rpmbin := exec.Command("ls", "/bin/rpm")
     rpmbinout, err := rpmbin.Output()
     rpmqa := exec.Command("rpm", "-qa")
@@ -436,14 +448,36 @@ func main() {
        return
     }
 
-    last := `
+    timezoneLast := `
     "timezone": "%s",
-    "uptime": "%v",
+    "uptime": "%v",`
+
+    timezoneLastLine := fmt.Sprintf(timezoneLast, strings.TrimSpace(timezonestring), time.Duration(h.Uptime) * time.Second)
+    writeTimezoneLast, err := io.WriteString(f, timezoneLastLine)
+    if err != nil {
+       fmt.Println(writeTimezoneLast, err)
+       return
+    }
+
+    if string(wbinout) != "" {
+       users_loggedin :=`
+    "users_loggedin": %s,`
+
+       whLine := fmt.Sprintf(users_loggedin, string(whjs))
+       whReplace := strings.Replace(whLine, ",\"\"]", "]", -1)
+       writeWh, err := io.WriteString(f, whReplace)
+       if err != nil {
+          fmt.Println(writeWh, err)
+          return
+       }
+    }
+
+    last := `
     "virtualizationrole": "%v",
     "virtualizationsystem": "%v"
   }`
 
-    lastLine := fmt.Sprintf(last, strings.TrimSpace(timezonestring), time.Duration(h.Uptime) * time.Second, h.VirtualizationRole, h.VirtualizationSystem)
+    lastLine := fmt.Sprintf(last, h.VirtualizationRole, h.VirtualizationSystem)
     writeLast, err := io.WriteString(f, lastLine)
     if err != nil {
        fmt.Println(writeLast, err)
