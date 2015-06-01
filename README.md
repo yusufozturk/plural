@@ -212,6 +212,13 @@ The agent runs every five minutes, it will delete the host out of the environmen
        ],
        "timezone": "UTC",
        "uptime": "471h18m59s",
+       "users": [
+         "root:x:0:0:root:/root:/bin/bash",
+         "adm:x:3:4:adm:/var/adm:/sbin/nologin",
+         "shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown",
+         "nginx:x:998:997:Nginx web server:/var/lib/nginx:/sbin/nologin",
+         "varnish:x:997:996:Varnish Cache:/var/lib/varnish:/sbin/nologin"
+       ],
        "users_loggedin": [
          "root-pts/0",
          "timski-pts/1"
