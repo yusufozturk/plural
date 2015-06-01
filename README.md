@@ -212,6 +212,10 @@ The agent runs every five minutes, it will delete the host out of the environmen
        ],
        "timezone": "UTC",
        "uptime": "471h18m59s",
+       "users_loggedin": [
+         "root-pts/0",
+         "timski-pts/1"
+       ],
        "virtualizationrole": "guest",
        "virtualizationsystem": "xen"
     }
