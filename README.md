@@ -138,6 +138,17 @@ The agent runs every five minutes, it will delete the host out of the environmen
        ],
        "hostname": "ip-10-28-229-205",
        "ipaddress": "10.28.229.205",
+       "iptables": [
+         "ACCEPT     tcp  --  anywhere             anywhere             state RELATED,ESTABLISHED",
+         "DROP       all  -f  anywhere             anywhere            ",
+         "ACCEPT     tcp  --  localhost            anywhere             tcp dpt:webcache",
+         "ACCEPT     tcp  --  localhost            anywhere             tcp dpt:webcache",
+         "DROP       tcp  --  anywhere             anywhere             tcp dpt:webcache",
+         "ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:http state NEW,ESTABLISHED",
+         "ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:http limit: avg 25/min burst 100",
+         "ACCEPT     tcp  --  anywhere             anywhere             tcp spt:http state ESTABLISHED",
+         "ACCEPT     tcp  --  anywhere             anywhere             tcp spt:webcache state ESTABLISHED"
+       ],
        "kernelversion": "2.6.32-431.29.2.el6.x86_64",
        "lastrun": "2015-05-21T17:54",
        "load15": "0",
