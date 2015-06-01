@@ -106,6 +106,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
        "diskfree": "6.7GB",
        "disktotal": "8.5GB",
        "diskused": "19",
+       "dns_nameservers": ["8.8.8.8","8.8.4.4"],
        "docker": [
          "dockerui/dockerui:latest, ./dockerui, '9000 9000 tcp 0.0.0.0'",
          "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '",
