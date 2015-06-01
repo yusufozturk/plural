@@ -126,6 +126,14 @@ func main() {
     whoutputSlice := strings.Split(whstring,"\n")
     whjs,_ := json.Marshal(whoutputSlice)
 
+    passfile := exec.Command("ls", "/etc/passwd")
+    passfileout, err := passfile.Output()
+    passgrep := exec.Command("grep", "-v", "^#", "/etc/passwd")
+    passgrepOut, err := passgrep.Output()
+    passstring := string(passgrepOut)
+    passoutputSlice := strings.Split(passstring,"\n")
+    passjs,_ := json.Marshal(passoutputSlice)
+
     rpmbin := exec.Command("ls", "/bin/rpm")
     rpmbinout, err := rpmbin.Output()
     rpmqa := exec.Command("rpm", "-qa")
@@ -457,6 +465,19 @@ func main() {
     if err != nil {
        fmt.Println(writeTimezoneLast, err)
        return
+    }
+
+    if string(passfileout) != "" {
+       users :=`
+    "users": %s,`
+
+       usersLine := fmt.Sprintf(users, string(passjs))
+       usersReplace := strings.Replace(usersLine, ",\"\"]", "]", -1)
+       writeUsers, err := io.WriteString(f, usersReplace)
+       if err != nil {
+          fmt.Println(writeUsers, err)
+          return
+       }
     }
 
     if string(wbinout) != "" {
