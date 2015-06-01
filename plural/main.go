@@ -102,6 +102,18 @@ func main() {
     }
 
     // UNIX system commands
+    dnsfile := exec.Command("ls", "/etc/resolv.conf")
+    dnsfileout, err := dnsfile.Output()
+    dnsgrep := exec.Command("grep", "nameserver", "/etc/resolv.conf")
+    dnsawk := exec.Command("awk", "{print$2}")
+    dnsgrepOut, err := dnsgrep.StdoutPipe()
+    dnsgrep.Start()
+    dnsawk.Stdin = dnsgrepOut
+    dnsOut, err := dnsawk.Output()
+    dnsstring := string(dnsOut)
+    dnsoutputSlice := strings.Split(dnsstring,"\n")
+    dnsjs,_ := json.Marshal(dnsoutputSlice)
+
     rpmbin := exec.Command("ls", "/bin/rpm")
     rpmbinout, err := rpmbin.Output()
     rpmqa := exec.Command("rpm", "-qa")
@@ -203,6 +215,19 @@ func main() {
     if err != nil {
        fmt.Println(writeTop, err)
        return
+    }
+
+    if string(dnsfileout) != "" {
+       dns_nameserver :=`
+    "dns_nameserver": %s,`
+
+       dnsLine := fmt.Sprintf(dns_nameserver, string(dnsjs))
+       dnsReplace := strings.Replace(dnsLine, ",\"\"]", "]", -1)
+       writeDns, err := io.WriteString(f, dnsReplace)
+       if err != nil {
+          fmt.Println(writeDns, err)
+          return
+       }
     }
 
     if string(dockerbinout) != "" {
@@ -336,6 +361,7 @@ func main() {
     if string(rpmbinout) != "" {
        packages :=`
     "packages": %s,`
+
        rpmLine := fmt.Sprintf(packages, string(rpmjs))
        rpmReplace := strings.Replace(rpmLine, ",\"\"]", "]", -1)
        writeRpm, err := io.WriteString(f, rpmReplace)
