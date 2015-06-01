@@ -88,7 +88,7 @@ func main() {
     diskfree := humanize.Bytes(k.Free)
     disktotal := humanize.Bytes(k.Total)
     t := time.Now()
-    lastrun := fmt.Sprintf("%d-%02d-%02dT%02d:%02d", t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute())
+    lastrun := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
     loadoneConv := strconv.FormatFloat(l.Load1, 'f', 6, 64)
     loadone := strings.Split(loadoneConv, ".")[0]
     loadfifteenConv := strconv.FormatFloat(l.Load15, 'f', 6, 64)
@@ -157,6 +157,18 @@ func main() {
     dpkgstring := string(dpkgOut)
     dpkgoutputSlice := strings.Split(dpkgstring,"\n")
     dpkgjs,_ := json.Marshal(dpkgoutputSlice)
+
+    iptablesbin := exec.Command("ls", "/sbin/iptables")
+    iptablesbinout, err := iptablesbin.Output()
+    iptablesl := exec.Command("iptables", "-L")
+    iptablesgrep := exec.Command("grep", "-v", "^Chain\\|target\\|^$")
+    iptableslOut, err := iptablesl.StdoutPipe()
+    iptablesl.Start()
+    iptablesgrep.Stdin = iptableslOut
+    iptablesOut, err := iptablesgrep.Output()
+    iptablesstring := string(iptablesOut)
+    iptablesoutputSlice := strings.Split(iptablesstring,"\n")
+    iptablesjs,_ := json.Marshal(iptablesoutputSlice)
 
     dockerbin := exec.Command("which", "docker")
     dockerbinout, err := dockerbin.Output()
@@ -352,6 +364,19 @@ func main() {
        writeGem, err := io.WriteString(f, gemReplace)
        if err != nil {
           fmt.Println(writeGem, err)
+          return
+       }
+    }
+
+    if string(iptablesbinout) != "" {
+       iptables :=`
+    "iptables": %s,`
+
+       iptablesLine := fmt.Sprintf(iptables, string(iptablesjs))
+       iptablesReplace := strings.Replace(iptablesLine, ",\"\"]", "]", -1)
+       writeIptables, err := io.WriteString(f, iptablesReplace)
+       if err != nil {
+          fmt.Println(writeIptables, err)
           return
        }
     }
