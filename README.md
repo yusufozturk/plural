@@ -103,6 +103,14 @@ The agent runs every five minutes, it will delete the host out of the environmen
 **Example JSON Output:**
 
     {
+       "audit_rules": [
+         "-w /var/log/audit/ -p wa -k LOG_audit",
+         "-w /etc/audit/auditd.conf -p wa -k CFG_audit",
+         "-w /etc/rc.d/init.d/auditd -p wa -k CFG_audit",
+         "-w /etc/sysconfig/auditd -p wa -k CFG_audit",
+         "-w /etc/audit/audit.rules -p wa -k CFG_audit",
+         "-w /etc/localtime -p wa -k time-change,CFG_system"
+       ],
        "diskfree": "6.7GB",
        "disktotal": "8.5GB",
        "diskused": "19",
