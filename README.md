@@ -6,105 +6,11 @@ Linux agent to send host-based information about the server to ElasticSearch and
 
 **Overview:**
 
-Ever wanted a dynamic data inventory, search and data visualization into your server environments?  Think CMDB like-features without the B.S.   Create graphs/lists on high disk usage/CPU utilization, kernel versions, Docker containers, TCP4 listening ports, AWS inventory, installed packages (rpm, dpkg, pip, gem), etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.  
+Ever wanted a dynamic inventory, search, and visualization into your server environments?  
 
-ElasticSearch terminology:
+Every wanted to minimize logging into servers, or limiting production access?
 
-http://elasticsearch:9200/index/type
- 
- Plural terminology: 
-
-http://elasticsearch:9200/environment/hostname
-
-Agent Run Time:
-
-The agent runs every five minutes, it will delete the host out of the environment and post real-time data at the five minute interval.
-
-** If you were to delete all hosts in the environment nightly.   If the agent is running and the server is up, it will populate the inventory currently with only running hosts and their data.  This works very well in dynamic compute environments.
-
-    # Delete all hosts out of the environment
-    curl -XDELETE http://elasticsearch:9200/environment/*
-
-----------
-
-**Install Dependencies:**
-
-*Server:*
-
- - ElasticSearch (Listening on IPv4 0.0.0.0 not 127.0.0.1 or :::) 
- - Java 7.x / OpenJDK 7
- - Kibana
-
-
- **Last step is configure ElasticSearch mappings for all indexes to not be analyzed:**
- 
- 
-       curl -XPUT localhost:9200/_template/template_1 -d '
-       {
-          "template":"*",
-          "settings":{
-             "index.refresh_interval":"5s"
-          },
-          "mappings":{
-             "_default_":{
-                "_all":{
-                   "enabled":true
-                },
-                "dynamic_templates":[
-                   {
-                      "string_fields":{
-                         "match":"*",
-                         "match_mapping_type":"string",
-                         "mapping":{
-                            "type":"string",
-                            "index":"not_analyzed",
-                            "omit_norms":true
-                         }
-                      }
-                   }
-                ]
-             }
-          }
-       }'
-
-
-*Client:*
-
- - Packages coming soon, for now `go build` project
- - `mkdir -p /opt/plural/{bin,conf}`
- - Move compiled binary to /opt/plural/bin/
-
-----------
-
-**Build Dependencies:**
-
-    go get github.com/spf13/viper
-    go get github.com/shirou/gopsutil
-    go get github.com/dustin/go-humanize
-    go get github.com/fsouza/go-dockerclient
-    go get github.com/drael/GOnetstat
-
-----------
-
-**Configuration (YAML, JSON or TOML):**
-
-*/opt/plural/conf/plural.yaml*
-
-    # ElasticSearch Indexer
-    elastic_host: 54.145.182.91
-    elastic_port: 9200
-    
-    # ElasticSearch Index Name
-    ## This can be anything, it could be aws, softlayer, prod, staging
-    environment: dev
-
-*DEFAULT  values if no config is present*
-
-    elastic_host : localhost
-    elastic_port : 9200
-    environment : dev
-
-----------
+Think CMDB like-features without the B.S.   Create graphs/lists on high disk usage/CPU utilization, kernel versions, Docker containers, TCP4/6 listening ports, AWS inventory, installed packages (rpm, dpkg, pip, gem), etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.
 
 **Example JSON Output:**
 
@@ -251,7 +157,104 @@ The agent runs every five minutes, it will delete the host out of the environmen
        "virtualizationrole": "guest",
        "virtualizationsystem": "xen"
     }
-  
+
+
+ElasticSearch terminology:
+
+http://elasticsearch:9200/index/type
+ 
+ Plural terminology: 
+
+http://elasticsearch:9200/environment/hostname
+
+Agent Run Time:
+
+The agent runs every five minutes, it will delete the host out of the environment and post real-time data at the five minute interval.
+
+** If you were to delete all hosts in the environment nightly.   If the agent is running and the server is up, it will populate the inventory currently with only running hosts and their data.  This works very well in dynamic compute environments.
+
+    # Delete all hosts out of the environment
+    curl -XDELETE http://elasticsearch:9200/environment/*
+
+----------
+
+**Install Dependencies:**
+
+*Server:*
+
+ - ElasticSearch (Listening on IPv4 0.0.0.0 not 127.0.0.1 or :::) 
+ - Java 7.x / OpenJDK 7
+ - Kibana
+
+
+ **Last step is configure ElasticSearch mappings for all indexes to not be analyzed:**
+ 
+ 
+       curl -XPUT localhost:9200/_template/template_1 -d '
+       {
+          "template":"*",
+          "settings":{
+             "index.refresh_interval":"5s"
+          },
+          "mappings":{
+             "_default_":{
+                "_all":{
+                   "enabled":true
+                },
+                "dynamic_templates":[
+                   {
+                      "string_fields":{
+                         "match":"*",
+                         "match_mapping_type":"string",
+                         "mapping":{
+                            "type":"string",
+                            "index":"not_analyzed",
+                            "omit_norms":true
+                         }
+                      }
+                   }
+                ]
+             }
+          }
+       }'
+
+
+*Client:*
+
+ - Packages coming soon, for now `go build` project
+ - `mkdir -p /opt/plural/{bin,conf}`
+ - Move compiled binary to /opt/plural/bin/
+
+----------
+
+**Build Dependencies:**
+
+    go get github.com/spf13/viper
+    go get github.com/shirou/gopsutil
+    go get github.com/dustin/go-humanize
+    go get github.com/fsouza/go-dockerclient
+    go get github.com/drael/GOnetstat
+
+----------
+
+**Configuration (YAML, JSON or TOML):**
+
+*/opt/plural/conf/plural.yaml*
+
+    # ElasticSearch Indexer
+    elastic_host: 54.145.182.91
+    elastic_port: 9200
+    
+    # ElasticSearch Index Name
+    ## This can be anything, it could be aws, softlayer, prod, staging
+    environment: dev
+
+*DEFAULT  values if no config is present*
+
+    elastic_host : localhost
+    elastic_port : 9200
+    environment : dev
+
 ----------
 
 **Tested Againsted:**
