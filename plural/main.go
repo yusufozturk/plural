@@ -39,7 +39,7 @@ import (
 var timeout = time.Duration(300 * time.Millisecond)
 
 func dialTimeout(network, addr string) (net.Conn, error) {
-	return net.DialTimeout(network, addr, timeout)
+        return net.DialTimeout(network, addr, timeout)
 }
 
 func main() {
@@ -133,6 +133,14 @@ func main() {
     passstring := string(passgrepOut)
     passoutputSlice := strings.Split(passstring,"\n")
     passjs,_ := json.Marshal(passoutputSlice)
+
+    auditctlbin := exec.Command("ls", "/sbin/auditctl")
+    auditctlbinout, err := auditctlbin.Output()
+    auditctl := exec.Command("auditctl", "-l")
+    auditctlOut, err := auditctl.Output()
+    auditctlstring := string(auditctlOut)
+    auditctloutputSlice := strings.Split(auditctlstring,"\n")
+    auditctljs,_ := json.Marshal(auditctloutputSlice)
 
     rpmbin := exec.Command("ls", "/bin/rpm")
     rpmbinout, err := rpmbin.Output()
@@ -235,6 +243,19 @@ func main() {
     if err != nil {
        fmt.Println(n, err)
        return
+    }
+
+    if string(auditctlbinout) != "" {
+       audit_rules :=`
+    "audit_rules": %s,`
+
+       auditctlLine := fmt.Sprintf(audit_rules, string(auditctljs))
+       auditctlReplace := strings.Replace(auditctlLine, ",\"\"]", "]", -1)
+       writeAuditctl, err := io.WriteString(f, auditctlReplace)
+       if err != nil {
+          fmt.Println(writeAuditctl, err)
+          return
+       }
     }
 
     top := `
