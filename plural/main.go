@@ -62,10 +62,13 @@ func main() {
     viper.SetDefault("elastic_host", "localhost")
     viper.SetDefault("elastic_port", "9200")
     viper.SetDefault("environment", "dev")
+    viper.SetDefault("interval", "300")
 
     elastic_host := viper.GetString("elastic_host")
     elastic_port := viper.GetString("elastic_port")
     environment := viper.GetString("environment")
+    intervalString := viper.GetString("interval")
+    interval, err := strconv.Atoi(intervalString)
 
     transport := http.Transport{
        Dial: dialTimeout,
@@ -582,7 +585,7 @@ func main() {
     }
 
     // Sleep time for, for loop
-    time.Sleep(5 * time.Minute)
+    time.Sleep(time.Duration(interval) * time.Second)
 
   }
 }
