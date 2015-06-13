@@ -183,6 +183,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
 *Server:*
 
  - ElasticSearch (Listening on IPv4 0.0.0.0 not 127.0.0.1 or :::) 
+ - [elasticsearch-http-basic Plugin](https://github.com/Asquera/elasticsearch-http-basic) (Optional) 
  - Java 7.x / OpenJDK 7
  - Kibana
 
@@ -252,6 +253,12 @@ The agent runs every five minutes, it will delete the host out of the environmen
     # Interval of agent runs in seconds
     ## Default is every five minutes
     interval: 300
+    
+    # Username if http-basic plugin is enabled
+    username: admin
+    
+    #Password if http-basic plugin is enabled
+    password: admin_pw
 
 *DEFAULT  values if no config is present*
 
@@ -259,6 +266,8 @@ The agent runs every five minutes, it will delete the host out of the environmen
     elastic_port : 9200
     environment : dev
     interval: 300
+    username: undef
+    password: undef
 
 ----------
 
