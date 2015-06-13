@@ -63,8 +63,8 @@ func main() {
     viper.SetDefault("elastic_port", "9200")
     viper.SetDefault("environment", "dev")
     viper.SetDefault("interval", "300")
-    viper.SetDefault("username", "False")
-    viper.SetDefault("password", "False")
+    viper.SetDefault("username", "undef")
+    viper.SetDefault("password", "undef")
 
     elastic_host := viper.GetString("elastic_host")
     elastic_port := viper.GetString("elastic_port")
@@ -569,13 +569,13 @@ func main() {
        }
        fmt.Println(dateStamp, h.Hostname, "elasticsearch endpoint:", elastic_url)
        reqDelete, err := http.NewRequest("DELETE", elastic_url, nil)
-       if username != "False" {
+       if username != "undef" {
           reqDelete.SetBasicAuth(username, password)
        }
        respDelete, err := http.DefaultClient.Do(reqDelete)
        fmt.Println(dateStamp, h.Hostname, "delete elasticsearch type status:", respDelete.Status)
        reqPost, err := http.NewRequest("POST", elastic_url, bytes.NewBuffer(jsonStr))
-       if password != "False" {
+       if password != "undef" {
           reqPost.SetBasicAuth(username, password)
        }
        reqPost.Header.Set("Content-Type", "application/json")
