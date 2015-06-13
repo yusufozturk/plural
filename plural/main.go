@@ -90,8 +90,8 @@ func main() {
     diskusedprct := strings.Split(diskusedprctConv, ".")[0]
     diskfree := humanize.Bytes(k.Free)
     disktotal := humanize.Bytes(k.Total)
-    t := time.Now()
-    lastrun := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
+    timeN := time.Now()
+    dateStamp := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", timeN.Year(), timeN.Month(), timeN.Day(), timeN.Hour(), timeN.Minute(), timeN.Second())
     loadoneConv := strconv.FormatFloat(l.Load1, 'f', 6, 64)
     loadone := strings.Split(loadoneConv, ".")[0]
     loadfifteenConv := strconv.FormatFloat(l.Load15, 'f', 6, 64)
@@ -419,7 +419,7 @@ func main() {
     "os": "%v",`
 
 
-    bottomLine := fmt.Sprintf(bottom, h.Hostname, ipaddress, strings.TrimSpace(kernelverstring), lastrun, loadfifteen, loadone, loadfive, memfree, memtotal, memusedprct, h.OS)
+    bottomLine := fmt.Sprintf(bottom, h.Hostname, ipaddress, strings.TrimSpace(kernelverstring), dateStamp, loadfifteen, loadone, loadfive, memfree, memtotal, memusedprct, h.OS)
     writeBottom, err := io.WriteString(f, bottomLine)
     if err != nil {
        fmt.Println(writeBottom, err)
@@ -564,10 +564,10 @@ func main() {
           fmt.Println(err.Error())
           return
        }
-       fmt.Println("ElasticSearch EndPoint:", elastic_url)
+       fmt.Println(dateStamp, h.Hostname, "elasticsearch endpoint:", elastic_url)
        reqDelete, err := http.NewRequest("DELETE", elastic_url, nil)
        respDelete, err := http.DefaultClient.Do(reqDelete)
-       fmt.Println("Delete ElasticSearch Type Status:", respDelete.Status)
+       fmt.Println(dateStamp, h.Hostname, "delete elasticsearch type status:", respDelete.Status)
        reqPost, err := http.NewRequest("POST", elastic_url, bytes.NewBuffer(jsonStr))
        reqPost.Header.Set("Content-Type", "application/json")
 
@@ -577,11 +577,11 @@ func main() {
           fmt.Println(err.Error())
        }
        defer respPost.Body.Close()
-       fmt.Println("POST JSON ElasticSearch Type Status:", respPost.Status)
+       fmt.Println(dateStamp, h.Hostname, "post json elasticsearch type status:", respPost.Status)
        postBody, _ := ioutil.ReadAll(respPost.Body)
-       fmt.Println("POST Response Body:", string(postBody))
+       fmt.Println(dateStamp, h.Hostname, "post response body:", string(postBody))
     } else {
-       fmt.Println("Unable to Connect to ElasticSearch Server:", "http://" + elastic_host + ":" + elastic_port)
+       fmt.Println(dateStamp, h.Hostname, "unable to connect to elasticeearch server:", "http://" + elastic_host + ":" + elastic_port)
     }
 
     // Sleep time for, for loop
