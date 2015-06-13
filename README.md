@@ -249,11 +249,16 @@ The agent runs every five minutes, it will delete the host out of the environmen
     ## This can be anything, it could be aws, softlayer, prod, staging
     environment: dev
 
+    # Interval of agent runs in seconds
+    ## Default is every five minutes
+    interval: 300
+
 *DEFAULT  values if no config is present*
 
     elastic_host : localhost
     elastic_port : 9200
     environment : dev
+    interval: 300
 
 ----------
 
