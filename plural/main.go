@@ -567,13 +567,13 @@ func main() {
           fmt.Println(err.Error())
           return
        }
-       fmt.Println(dateStamp, h.Hostname, "elasticsearch endpoint:", elastic_url)
+       fmt.Println(dateStamp, h.Hostname, "INFO elasticsearch endpoint:", elastic_url)
        reqDelete, err := http.NewRequest("DELETE", elastic_url, nil)
        if username != "undef" {
           reqDelete.SetBasicAuth(username, password)
        }
        respDelete, err := http.DefaultClient.Do(reqDelete)
-       fmt.Println(dateStamp, h.Hostname, "delete elasticsearch type status:", respDelete.Status)
+       fmt.Println(dateStamp, h.Hostname, "DELETE elasticsearch type status:", respDelete.Status)
        reqPost, err := http.NewRequest("POST", elastic_url, bytes.NewBuffer(jsonStr))
        if password != "undef" {
           reqPost.SetBasicAuth(username, password)
@@ -586,11 +586,11 @@ func main() {
           fmt.Println(err.Error())
        }
        defer respPost.Body.Close()
-       fmt.Println(dateStamp, h.Hostname, "post json elasticsearch type status:", respPost.Status)
+       fmt.Println(dateStamp, h.Hostname, "POST json elasticsearch type status:", respPost.Status)
        postBody, _ := ioutil.ReadAll(respPost.Body)
-       fmt.Println(dateStamp, h.Hostname, "post response body:", string(postBody))
+       fmt.Println(dateStamp, h.Hostname, "POST response body:", string(postBody))
     } else {
-       fmt.Println(dateStamp, h.Hostname, "unable to connect to elasticeearch server:", "http://" + elastic_host + ":" + elastic_port)
+       fmt.Println(dateStamp, h.Hostname, "FAIL unable to connect to elasticeearch server:", "http://" + elastic_host + ":" + elastic_port)
     }
 
     // Sleep time for, for loop
