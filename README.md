@@ -36,6 +36,7 @@ Think CMDB like-features without the B.S.   Create graphs/lists on high disk usa
          "-w /etc/audit/audit.rules -p wa -k CFG_audit",
          "-w /etc/localtime -p wa -k time-change,CFG_system"
        ],
+       "cpu_count": "4",
        "diskfree": "6.7GB",
        "disktotal": "8.5GB",
        "diskused": "19",
