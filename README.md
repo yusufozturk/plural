@@ -238,6 +238,15 @@ The agent runs every five minutes, it will delete the host out of the environmen
 
 ----------
 
+**Command-Line Arguments:**
+
+    --daemon, will run in daemon mode, see configuration, interval
+    
+    No arguments will do a one-time run and produce a JSON blob in the current path
+
+
+-----------
+
 **Configuration (YAML, JSON or TOML):**
 
 */opt/plural/conf/plural.yaml*
@@ -260,6 +269,9 @@ The agent runs every five minutes, it will delete the host out of the environmen
     #Password if http-basic plugin is enabled
     password: admin_pw
 
+    # Overwrite ElasticSearch host type data every run (don't keep historical data)
+    overwrite: enable
+
 *DEFAULT  values if no config is present*
 
     elastic_host : localhost
@@ -268,6 +280,17 @@ The agent runs every five minutes, it will delete the host out of the environmen
     interval: 300
     username: undef
     password: undef
+    overwrite: undef
+
+----------
+
+**Log Output Example:**
+
+    2015-08-25T23:20:50 your_hostname INFO your_hostname.json SHA256 checksum is 49377941579c5d8ce344a771c64a4b21f53c3f87c698a122372eef83f4bfda0e
+    2015-08-25T23:20:50 your_hostname INFO elasticsearch endpoint: http://ip_address:9200/dev/your_hostname
+    2015-08-25T23:20:50 your_hostname DELETE elasticsearch type status: 200 OK
+    2015-08-25T23:20:50 your_hostname POST json elasticsearch type status: 201 Created
+    2015-08-25T23:20:50 your_hostname POST response body: {"_index":"dev","_type":"your_hostname","_id":"AU9oBcN52kmffH_oPliZ","_version":1,"created":true}
 
 ----------
 
