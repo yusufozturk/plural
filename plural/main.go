@@ -26,6 +26,7 @@ import (
     "encoding/json"
     "math"
     "crypto/sha256"
+    "flag"
     "github.com/spf13/viper"
     "github.com/shirou/gopsutil/mem"
     "github.com/shirou/gopsutil/disk"
@@ -41,24 +42,33 @@ import (
 var timeout = time.Duration(300 * time.Millisecond)
 
 func dialTimeout(network, addr string) (net.Conn, error) {
-        return net.DialTimeout(network, addr, timeout)
+   return net.DialTimeout(network, addr, timeout)
 }
+
+// Command-line flags
+var configFlag = flag.String("config", "", "  Set configuration path, default is /opt/plural/conf")
+var daemonFlag = flag.Bool("daemon", false, "  Run in daemon mode")
+
+func init() {
+   flag.StringVar(configFlag, "c", "", "  Set configuration path, default is /opt/plural/conf")
+   flag.BoolVar(daemonFlag, "d", false, "  Run in daemon mode")
+}
+
+var usage = `Usage: plural [options] <args>
+
+    -d, --daemon       Run in daemon mode
+    -c=, --config=     Set configuration path, default path is /opt/plural/conf
+
+Documentation:  https://github.com/marshyski/plural/blob/master/README.md`
+
 
 func main() {
 
-  usage := `Usage: plural [<args>]
-
-    --daemon			     Run in daemon mode
-  
-    https://github.com/marshyski/plural/blob/master/README.md`
-
-  args := os.Args[1:]
-  if len(args) >= 1 {
-     if args[0] != "--daemon" {
-        fmt.Println(usage)
-        os.Exit(1)
-     }
+  flag.Usage = func() {
+    fmt.Println(usage)
   }
+
+  flag.Parse()
 
   for {
 
@@ -68,11 +78,13 @@ func main() {
 
     // Configuration file settings using key-value
     viper.SetConfigName("plural")
-    viper.AddConfigPath("/opt/plural/conf")
-    err := viper.ReadInConfig()
-    if err != nil {
-       fmt.Println("No Configuration File Using DEFAULTS")
+    if *configFlag != "" {
+       viper.AddConfigPath(*configFlag)
+    } else {
+       viper.AddConfigPath("/opt/plural/conf")
     }
+
+    viperReadConfig := viper.ReadInConfig()
 
     // Default settings if no config file is supplied
     viper.SetDefault("elastic_host", "localhost")
@@ -602,7 +614,10 @@ func main() {
         io.WriteString(hash, string(buf))
     }
 
-//    fmt.Println(dateStamp, h.Hostname, "INFO", file.Name(), "SHA256 checksum is", hash.Sum(nil))
+    if viperReadConfig != nil {
+       fmt.Println(dateStamp, h.Hostname, "INFO no config file used, using default configuration")
+    }
+
     fmt.Printf("%s %s INFO %s SHA256 checksum is %x\n",dateStamp, h.Hostname, file.Name(), hash.Sum(nil)) 
 
     // Check to see if ElasticSearch server is up
@@ -644,11 +659,11 @@ func main() {
        fmt.Println(dateStamp, h.Hostname, "FAIL unable to connect to elasticeearch server:", "http://" + elastic_host + ":" + elastic_port)
     }
 
-    // Sleep time for, for loop
-    if len(args) < 1 {
+    if !*daemonFlag {
        break
     }
 
+    // Sleep / interval time for daemon
     time.Sleep(time.Duration(interval) * time.Second)
 
   }
