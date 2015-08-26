@@ -66,8 +66,8 @@ var usage = `Usage: plural [options] <args>
 Example:       plural -d -c=/opt/plural/conf -o=/tmp
 
 Documentation:  https://github.com/marshyski/plural/blob/master/README.md
-`
 
+`
 
 func main() {
 
