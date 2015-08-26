@@ -1,7 +1,5 @@
 # plural
 
-Linux agent to send host-based information about the server to ElasticSearch and Kibana
-
 
 #### Table of Contents
 
