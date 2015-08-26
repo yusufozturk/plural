@@ -250,12 +250,12 @@ The agent runs every five minutes, it will delete the host out of the environmen
 
 ## Command-Line Arguments
 
-    -d, --daemon       Run in daemon mode
-    -c=, --config=     Set configuration path, default path is /opt/plural/conf
-    -o=, --output=     Output JSON file in a directory specified
-    
-    No flags / arguments will do a one-time run and produce a JSON file in the current path of the binary
+No flags / arguments will do a one-time run and produce a JSON file in the current path of the binary
 
+    -d, --daemon     Run in daemon mode
+    -c, --config     Set configuration path, default path is /opt/plural/conf
+    -o, --output     Output JSON file in a directory specified
+    
 
 ## Configuration 
 
