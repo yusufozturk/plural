@@ -60,7 +60,7 @@ var usage = `Usage: plural [options] <args>
 
     -d, --daemon       Run in daemon mode
     -c=, --config=     Set configuration path, default path is /opt/plural/conf
-    -o=, --output=     utput JSON file in a directory specified
+    -o=, --output=     Output JSON file in a directory specified
 
 Documentation:  https://github.com/marshyski/plural/blob/master/README.md`
 
