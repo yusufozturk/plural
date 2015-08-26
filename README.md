@@ -82,6 +82,11 @@ Think CMDB like-features without the B.S.   Create graphs/lists on high disk usa
          "ACCEPT     tcp  --  anywhere             anywhere             tcp spt:http state ESTABLISHED",
          "ACCEPT     tcp  --  anywhere             anywhere             tcp spt:webcache state ESTABLISHED"
        ],
+       "ip_route": [
+         "default via 192.168.1.1 dev eth0 ",
+         "172.17.0.0/16 dev docker0  proto kernel  scope link  src 172.17.42.1 ",
+         "192.168.1.0/24 dev eth0  proto kernel  scope link  src 192.168.1.10 "
+       ],
        "kernelversion": "2.6.32-431.29.2.el6.x86_64",
        "lastrun": "2015-05-21T17:54",
        "load15": "0",
