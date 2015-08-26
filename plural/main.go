@@ -24,6 +24,8 @@ import (
     "bytes"
     "strconv"
     "encoding/json"
+    "math"
+    "crypto/sha256"
     "github.com/spf13/viper"
     "github.com/shirou/gopsutil/mem"
     "github.com/shirou/gopsutil/disk"
@@ -43,6 +45,20 @@ func dialTimeout(network, addr string) (net.Conn, error) {
 }
 
 func main() {
+
+  usage := `Usage: plural [<args>]
+
+    --daemon			     Run in daemon mode
+  
+    https://github.com/marshyski/plural/blob/master/README.md`
+
+  args := os.Args[1:]
+  if len(args) >= 1 {
+     if args[0] != "--daemon" {
+        fmt.Println(usage)
+        os.Exit(1)
+     }
+  }
 
   for {
 
@@ -65,6 +81,7 @@ func main() {
     viper.SetDefault("interval", "300")
     viper.SetDefault("username", "undef")
     viper.SetDefault("password", "undef")
+    viper.SetDefault("overwrite", "undef")
 
     elastic_host := viper.GetString("elastic_host")
     elastic_port := viper.GetString("elastic_port")
@@ -72,6 +89,7 @@ func main() {
     interval := viper.GetInt("interval")
     username := viper.GetString("username")
     password := viper.GetString("password")
+    overwrite := viper.GetString("overwrite")
 
     transport := http.Transport{
        Dial: dialTimeout,
@@ -559,6 +577,34 @@ func main() {
 
     f.Close()
 
+    // Generate SHA256 SUM of JSON file
+    const filechunk = 8192
+
+    file, err := os.Open(filename)
+
+    if err != nil {
+       fmt.Println(err.Error())
+       return
+    }
+
+    defer file.Close()
+
+    info, _ := file.Stat()
+    filesize := info.Size()
+    blocks := uint64(math.Ceil(float64(filesize) / float64(filechunk)))
+    hash := sha256.New()
+
+    for i := uint64(0); i < blocks; i++ {
+        blocksize := int(math.Min(filechunk, float64(filesize-int64(i*filechunk))))
+        buf := make([] byte, blocksize)
+
+        file.Read(buf)
+        io.WriteString(hash, string(buf))
+    }
+
+//    fmt.Println(dateStamp, h.Hostname, "INFO", file.Name(), "SHA256 checksum is", hash.Sum(nil))
+    fmt.Printf("%s %s INFO %s SHA256 checksum is %x\n",dateStamp, h.Hostname, file.Name(), hash.Sum(nil)) 
+
     // Check to see if ElasticSearch server is up
     elasticResponse, err := client.Get(elastic_url)
     if elasticResponse != nil {
@@ -568,12 +614,17 @@ func main() {
           return
        }
        fmt.Println(dateStamp, h.Hostname, "INFO elasticsearch endpoint:", elastic_url)
-       reqDelete, err := http.NewRequest("DELETE", elastic_url, nil)
-       if username != "undef" {
-          reqDelete.SetBasicAuth(username, password)
+       if overwrite == "enable" {
+          reqDelete, err := http.NewRequest("DELETE", elastic_url, nil)
+          if username != "undef" {
+             reqDelete.SetBasicAuth(username, password)
+          }
+          respDelete, err := http.DefaultClient.Do(reqDelete)
+          fmt.Println(dateStamp, h.Hostname, "DELETE elasticsearch type status:", respDelete.Status)
+          if err != nil {
+             fmt.Println(err.Error())
+          }
        }
-       respDelete, err := http.DefaultClient.Do(reqDelete)
-       fmt.Println(dateStamp, h.Hostname, "DELETE elasticsearch type status:", respDelete.Status)
        reqPost, err := http.NewRequest("POST", elastic_url, bytes.NewBuffer(jsonStr))
        if password != "undef" {
           reqPost.SetBasicAuth(username, password)
@@ -594,6 +645,10 @@ func main() {
     }
 
     // Sleep time for, for loop
+    if len(args) < 1 {
+       break
+    }
+
     time.Sleep(time.Duration(interval) * time.Second)
 
   }
