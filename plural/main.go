@@ -62,7 +62,11 @@ var usage = `Usage: plural [options] <args>
     -c=, --config=     Set configuration path, default path is /opt/plural/conf
     -o=, --output=     Output JSON file in a directory specified
 
-Documentation:  https://github.com/marshyski/plural/blob/master/README.md`
+
+Example:       plural -d -c=/opt/plural/conf -o=/tmp
+
+Documentation:  https://github.com/marshyski/plural/blob/master/README.md
+`
 
 
 func main() {
