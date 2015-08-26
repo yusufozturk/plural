@@ -59,11 +59,11 @@ func init() {
 var usage = `Usage: plural [options] <args>
 
     -d, --daemon       Run in daemon mode
-    -c=, --config=     Set configuration path, default path is /opt/plural/conf
-    -o=, --output=     Output JSON file in a directory specified
+    -c, --config     Set configuration path, default path is /opt/plural/conf
+    -o, --output     Output JSON file in a directory specified
 
 
-Example:       plural -d -c=/opt/plural/conf -o=/tmp
+Example:       plural -d -c /opt/plural/conf -o /tmp
 
 Documentation:  https://github.com/marshyski/plural/blob/master/README.md
 
