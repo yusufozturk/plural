@@ -251,6 +251,14 @@ func main() {
     gemoutSlice := strings.Split(gemreplace2,"\n")
     gemjs,_ := json.Marshal(gemoutSlice)
 
+    iproutebin := exec.Command("ls", "/sbin/ip")
+    iproutebinout, err := iproutebin.Output()
+    iproute := exec.Command("ip", "route")
+    iprouteOut, err := iproute.Output()
+    iproutestring := string(iprouteOut)
+    iprouteoutputSlice := strings.Split(iproutestring,"\n")
+    iproutejs,_ := json.Marshal(iprouteoutputSlice)
+
     kernelver := exec.Command("uname","-r")
     kernelverout, err := kernelver.Output()
     kernelverstring := string(kernelverout)
@@ -447,6 +455,19 @@ func main() {
       writeIptables, err := io.WriteString(f, iptablesReplace)
       if err != nil {
         fmt.Println(writeIptables, err)
+        return
+      }
+    }
+
+    if string(iproutebinout) != "" {
+      ip_route :=`
+      "ip_route": %s,`
+
+      iprouteLine := fmt.Sprintf(ip_route, string(iproutejs))
+      iprouteReplace := strings.Replace(iprouteLine, ",\"\"]", "]", -1)
+      writeIproute, err := io.WriteString(f, iprouteReplace)
+      if err != nil {
+        fmt.Println(writeIproute, err)
         return
       }
     }
