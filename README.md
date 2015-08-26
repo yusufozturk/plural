@@ -2,9 +2,23 @@
 
 Linux agent to send host-based information about the server to ElasticSearch and Kibana
 
-----------
 
-**Overview:**
+#### Table of Contents
+
+1. [Overview](#overview)
+	* [Example JSON Output](#example-json-output)
+2. [Install Dependencies](#install-dependencies)
+    * [Server](#server)
+    * [Client](#client)
+3. [Build Dependencies](#build-dependencies)
+4. [Command-Line Arguments](#command-line-arguments)
+5. [Configuration](#configuration)
+5. [Log Output Example](#log-output-example)
+6. [Platforms Tested On](#platforms-tested-on)
+7. [Screenshots](#screenshots)
+
+
+## Overview
 
 Ever wanted a dynamic inventory, search, and visualization into your server environments?  
 
@@ -12,7 +26,8 @@ Every wanted to minimize logging into servers, or limiting production access?
 
 Think CMDB like-features without the B.S.   Create graphs/lists on high disk usage/CPU utilization, kernel versions, Docker containers, TCP4/6 listening ports, AWS inventory, installed packages (rpm, dpkg, pip, gem), etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.
 
-**Example JSON Output:**
+
+### Example JSON Output
 
     {
        "audit_rules": [
@@ -176,11 +191,10 @@ The agent runs every five minutes, it will delete the host out of the environmen
     # Delete all hosts out of the environment
     curl -XDELETE http://elasticsearch:9200/environment/*
 
-----------
 
-**Install Dependencies:**
+## Install Dependencies
 
-*Server:*
+### Server
 
  - ElasticSearch (Listening on IPv4 0.0.0.0 not 127.0.0.1 or :::) 
  - [elasticsearch-http-basic Plugin](https://github.com/Asquera/elasticsearch-http-basic) (Optional) 
@@ -220,15 +234,14 @@ The agent runs every five minutes, it will delete the host out of the environmen
        }'
 
 
-*Client:*
+### Client
 
  - Packages coming soon, for now `go build` project
  - `mkdir -p /opt/plural/{bin,conf}`
  - Move compiled binary to /opt/plural/bin/
 
-----------
 
-**Build Dependencies:**
+## Build Dependencies
 
     go get github.com/spf13/viper
     go get github.com/shirou/gopsutil
@@ -236,18 +249,17 @@ The agent runs every five minutes, it will delete the host out of the environmen
     go get github.com/fsouza/go-dockerclient
     go get github.com/drael/GOnetstat
 
-----------
 
-**Command-Line Arguments:**
+## Command-Line Arguments
 
     --daemon, will run in daemon mode, see configuration, interval
     
     No arguments will do a one-time run and produce a JSON blob in the current path
 
 
------------
+## Configuration 
 
-**Configuration (YAML, JSON or TOML):**
+Configurations can be written in YAML, JSON or TOML.
 
 */opt/plural/conf/plural.yaml*
 
@@ -281,10 +293,9 @@ The agent runs every five minutes, it will delete the host out of the environmen
     username: undef
     password: undef
     overwrite: undef
+    
 
-----------
-
-**Log Output Example:**
+## Log Output Example
 
     2015-08-25T23:20:50 your_hostname INFO your_hostname.json SHA256 checksum is 49377941579c5d8ce344a771c64a4b21f53c3f87c698a122372eef83f4bfda0e
     2015-08-25T23:20:50 your_hostname INFO elasticsearch endpoint: http://ip_address:9200/dev/your_hostname
@@ -292,18 +303,16 @@ The agent runs every five minutes, it will delete the host out of the environmen
     2015-08-25T23:20:50 your_hostname POST json elasticsearch type status: 201 Created
     2015-08-25T23:20:50 your_hostname POST response body: {"_index":"dev","_type":"your_hostname","_id":"AU9oBcN52kmffH_oPliZ","_version":1,"created":true}
 
-----------
 
-**Tested Againsted:**
+## Platforms Tested On
 
  - CentOS/RHEL 6.x
  - Fedora 20
  - Ubuntu 14
  - Mac OS X 13.4.0
 
-----------
 
-**Screenshots**
+## Screenshots
 
 ![Dashboard View](https://s3.amazonaws.com/timski-pictures/dashview.png)
 
