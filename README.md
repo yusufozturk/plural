@@ -299,7 +299,7 @@ Configurations can be written in YAML, JSON or TOML.
 
 ## Log Output Example
 
-    2015-08-26T04:00:11 your_hostname INFO no config file used, using default configuration
+    2015-08-25T23:20:50 your_hostname INFO no config file used, using default configuration
     2015-08-25T23:20:50 your_hostname INFO your_hostname.json SHA256 checksum is 49377941579c5d8ce344a771c64a4b21f53c3f87c698a122372eef83f4bfda0e
     2015-08-25T23:20:50 your_hostname INFO elasticsearch endpoint: http://ip_address:9200/dev/your_hostname
     2015-08-25T23:20:50 your_hostname DELETE elasticsearch type status: 200 OK
