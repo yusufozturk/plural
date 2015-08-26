@@ -32,6 +32,7 @@ import (
   "github.com/shirou/gopsutil/disk"
   "github.com/shirou/gopsutil/host"
   "github.com/shirou/gopsutil/load"
+  "github.com/shirou/gopsutil/cpu"
   "github.com/dustin/go-humanize"
   "github.com/fsouza/go-dockerclient"
   "github.com/drael/GOnetstat"
@@ -118,6 +119,7 @@ func main() {
         Transport: &transport,
       }
 
+      cpuCounts, _ := cpu.CPUCounts(true)
       v, _ := mem.VirtualMemory()
       k, _ := disk.DiskUsage("/")
       h, _ := host.HostInfo()
@@ -316,11 +318,12 @@ func main() {
     }
 
     top := `
+    "cpu_count": "%v",
     "diskfree": "%v",
     "disktotal": "%v",
     "diskused": "%v",`
 
-    topLine := fmt.Sprintf(top, diskfree, disktotal, diskusedprct)
+    topLine := fmt.Sprintf(top, cpuCounts, diskfree, disktotal, diskusedprct)
     writeTop, err := io.WriteString(f, topLine)
     if err != nil {
       fmt.Println(writeTop, err)
