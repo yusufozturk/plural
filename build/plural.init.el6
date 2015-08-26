@@ -26,7 +26,7 @@ start() {
     return 1
   fi
   echo 'Starting plural service' >&2
-  local CMD="$BIN &> \"$LOGFILE\" & echo \$!"
+  local CMD="$BIN --daemon &> \"$LOGFILE\" & echo \$!"
   su -c "$CMD" $RUNAS > "$PIDFILE"
   echo 'Service plural started' >&2
 }
