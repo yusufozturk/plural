@@ -48,16 +48,19 @@ func dialTimeout(network, addr string) (net.Conn, error) {
 // Command-line flags
 var configFlag = flag.String("config", "", "  Set configuration path, default is /opt/plural/conf")
 var daemonFlag = flag.Bool("daemon", false, "  Run in daemon mode")
+var outputFlag = flag.String("output", "", "  Output JSON file in a directory specified")
 
 func init() {
    flag.StringVar(configFlag, "c", "", "  Set configuration path, default is /opt/plural/conf")
    flag.BoolVar(daemonFlag, "d", false, "  Run in daemon mode")
+   flag.StringVar(outputFlag, "o", "", "  Output JSON file in a directory specified")
 }
 
 var usage = `Usage: plural [options] <args>
 
     -d, --daemon       Run in daemon mode
     -c=, --config=     Set configuration path, default path is /opt/plural/conf
+    -o=, --output=     utput JSON file in a directory specified
 
 Documentation:  https://github.com/marshyski/plural/blob/master/README.md`
 
@@ -267,7 +270,13 @@ func main() {
     elastic_url := "http://" + elastic_host + ":" + elastic_port + "/" + environment + "/" + h.Hostname
 
     // JSON file name
-    filename := h.Hostname + ".json"
+    if *outputFlag != "" {
+       if string(*outputFlag)[:len(string(*outputFlag))-1] != "/" {
+          *outputFlag += "/"
+       }
+    }
+
+    filename := *outputFlag + h.Hostname + ".json"
 
     // Create JSON file
     f, err := os.Create(filename)
