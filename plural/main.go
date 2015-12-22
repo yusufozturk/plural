@@ -37,7 +37,7 @@ import (
   "github.com/shirou/gopsutil/cpu"
   "github.com/dustin/go-humanize"
   "github.com/fsouza/go-dockerclient"
-  "github.com/marshyski/GOnetstat"
+  "github.com/aelsabbahy/GOnetstat"
 )
 
 // HTTP client timeout
