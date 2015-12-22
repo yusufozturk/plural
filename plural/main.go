@@ -536,7 +536,7 @@ func main() {
       }
     }
 
-    gonetstat4, err := GOnetstat.Tcp()
+    gonetstat4 := GOnetstat.Tcp()
     tcp4String := `[`
     for _, nettcp := range(gonetstat4) {
       if nettcp.State == "LISTEN" {
@@ -549,7 +549,7 @@ func main() {
     tcp4String += `""]`
     tcp4Replace := strings.Replace(tcp4String, ",\"\"]", "]", -1)
 
-    gonetstat6, err := GOnetstat.Tcp6()
+    gonetstat6 := GOnetstat.Tcp6()
     tcp6String := `[`
     for _, nettcp := range(gonetstat6) {
       if nettcp.State == "LISTEN" {
@@ -561,11 +561,6 @@ func main() {
     }
     tcp6String += `""]`
     tcp6Replace := strings.Replace(tcp6String, ",\"\"]", "]", -1)
-
-    if err != nil {
-       fmt.Println(err)
-       return
-    }
 
     beforeLast := `
     "platform": "%v",
