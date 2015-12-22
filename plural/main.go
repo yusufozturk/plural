@@ -27,6 +27,8 @@ import (
   "math"
   "crypto/sha256"
   "flag"
+  "plural/networkip"
+
   "github.com/spf13/viper"
   "github.com/shirou/gopsutil/mem"
   "github.com/shirou/gopsutil/disk"
@@ -35,8 +37,7 @@ import (
   "github.com/shirou/gopsutil/cpu"
   "github.com/dustin/go-humanize"
   "github.com/fsouza/go-dockerclient"
-  "github.com/drael/GOnetstat"
-  "plural/networkip"
+  "github.com/marshyski/GOnetstat"
 )
 
 // HTTP client timeout
@@ -535,7 +536,7 @@ func main() {
       }
     }
 
-    gonetstat4 := GOnetstat.Tcp()
+    gonetstat4, err := GOnetstat.Tcp(false)
     tcp4String := `[`
     for _, nettcp := range(gonetstat4) {
       if nettcp.State == "LISTEN" {
@@ -548,7 +549,7 @@ func main() {
     tcp4String += `""]`
     tcp4Replace := strings.Replace(tcp4String, ",\"\"]", "]", -1)
 
-    gonetstat6 := GOnetstat.Tcp6()
+    gonetstat6, err := GOnetstat.Tcp6(false)
     tcp6String := `[`
     for _, nettcp := range(gonetstat6) {
       if nettcp.State == "LISTEN" {
@@ -560,6 +561,11 @@ func main() {
     }
     tcp6String += `""]`
     tcp6Replace := strings.Replace(tcp6String, ",\"\"]", "]", -1)
+
+    if err != nil {
+       fmt.Println(err)
+       return
+    }
 
     beforeLast := `
     "platform": "%v",

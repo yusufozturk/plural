@@ -181,8 +181,8 @@ Think CMDB like-features without the B.S.   Create graphs/lists on high disk usa
 ElasticSearch terminology:
 
 http://elasticsearch:9200/index/type
- 
- Plural terminology: 
+
+ Plural terminology:
 
 http://elasticsearch:9200/environment/hostname
 
@@ -200,15 +200,15 @@ The agent runs every five minutes, it will delete the host out of the environmen
 
 ### Server
 
- - ElasticSearch (Listening on IPv4 0.0.0.0 not 127.0.0.1 or :::) 
- - [elasticsearch-http-basic Plugin](https://github.com/Asquera/elasticsearch-http-basic) (Optional) 
+ - ElasticSearch (Listening on IPv4 0.0.0.0 not 127.0.0.1 or :::)
+ - [elasticsearch-http-basic Plugin](https://github.com/Asquera/elasticsearch-http-basic) (Optional)
  - Java 7.x / OpenJDK 7
  - Kibana
 
 
  **Last step is configure ElasticSearch mappings for all indexes to not be analyzed:**
- 
- 
+
+
        curl -XPUT localhost:9200/_template/template_1 -d '
        {
           "template":"*",
@@ -251,7 +251,7 @@ The agent runs every five minutes, it will delete the host out of the environmen
     go get github.com/shirou/gopsutil
     go get github.com/dustin/go-humanize
     go get github.com/fsouza/go-dockerclient
-    go get github.com/drael/GOnetstat
+    go get github.com/marshyski/GOnetstat
 
 
 ## Command-Line Arguments
@@ -261,9 +261,9 @@ No flags / arguments will do a one-time run and produce a JSON file in the curre
     -d, --daemon     Run in daemon mode
     -c, --config     Set configuration path, default path is /opt/plural/conf
     -o, --output     Output JSON file in a directory specified
-    
 
-## Configuration 
+
+## Configuration
 
 Configurations can be written in YAML, JSON or TOML.
 
@@ -272,7 +272,7 @@ Configurations can be written in YAML, JSON or TOML.
     # ElasticSearch Indexer
     elastic_host: 54.145.182.91
     elastic_port: 9200
-    
+
     # ElasticSearch Index Name
     ## This can be anything, it could be aws, softlayer, prod, staging
     environment: dev
@@ -280,10 +280,10 @@ Configurations can be written in YAML, JSON or TOML.
     # Interval of agent runs in seconds
     ## Default is every five minutes
     interval: 300
-    
+
     # Username if http-basic plugin is enabled
     username: admin
-    
+
     #Password if http-basic plugin is enabled
     password: admin_pw
 
@@ -299,7 +299,7 @@ Configurations can be written in YAML, JSON or TOML.
     username: undef
     password: undef
     overwrite: undef
-    
+
 
 ## Log Output Example
 
