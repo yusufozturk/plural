@@ -6,7 +6,7 @@ go get github.com/spf13/viper
 go get github.com/shirou/gopsutil
 go get github.com/dustin/go-humanize
 go get github.com/fsouza/go-dockerclient
-go get github.com/marshyski/GOnetstat
+go get github.com/drael/GOnetstat
 
 cd src
 git clone https://github.com/marshyski/plural.git

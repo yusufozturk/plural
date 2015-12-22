@@ -37,7 +37,7 @@ import (
   "github.com/shirou/gopsutil/cpu"
   "github.com/dustin/go-humanize"
   "github.com/fsouza/go-dockerclient"
-  "github.com/aelsabbahy/GOnetstat"
+  "github.com/drael/GOnetstat"
 )
 
 // HTTP client timeout
@@ -536,7 +536,7 @@ func main() {
       }
     }
 
-    gonetstat4, err := GOnetstat.Tcp(false)
+    gonetstat4, err := GOnetstat.Tcp()
     tcp4String := `[`
     for _, nettcp := range(gonetstat4) {
       if nettcp.State == "LISTEN" {
@@ -549,7 +549,7 @@ func main() {
     tcp4String += `""]`
     tcp4Replace := strings.Replace(tcp4String, ",\"\"]", "]", -1)
 
-    gonetstat6, err := GOnetstat.Tcp6(false)
+    gonetstat6, err := GOnetstat.Tcp6()
     tcp6String := `[`
     for _, nettcp := range(gonetstat6) {
       if nettcp.State == "LISTEN" {
