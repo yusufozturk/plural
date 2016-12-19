@@ -19,7 +19,6 @@ clean:
 	rm -f ./$(MAIN_PACKAGE)
 
 run:
-	go generate ./...
 	go run -ldflags $(LDFLAGS) main.go
 
 fmt:

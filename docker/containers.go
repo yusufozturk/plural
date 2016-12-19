@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"plural/data"
-	"plural/utils"
+	"github.com/marshyski/plural/data"
+	"github.com/marshyski/plural/utils"
 
 	"github.com/fsouza/go-dockerclient"
 )

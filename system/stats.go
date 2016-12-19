@@ -1,11 +1,12 @@
 package system
 
 import (
-	"plural/config"
-	"plural/data"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/marshyski/plural/config"
+	"github.com/marshyski/plural/data"
 
 	"github.com/dustin/go-humanize"
 	"github.com/shirou/gopsutil/cpu"

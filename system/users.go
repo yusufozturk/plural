@@ -3,8 +3,9 @@ package system
 import (
 	"fmt"
 	"os/exec"
-	"plural/data"
 	"strings"
+
+	"github.com/marshyski/plural/data"
 )
 
 func UsersLoggedIn() {

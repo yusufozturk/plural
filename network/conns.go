@@ -3,7 +3,7 @@ package network
 import (
 	"bytes"
 
-	"plural/data"
+	"github.com/marshyski/plural/data"
 
 	"github.com/drael/GOnetstat"
 )

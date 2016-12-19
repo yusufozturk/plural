@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 
-	"plural/data"
+	"github.com/marshyski/plural/data"
 )
 
 func IP() {

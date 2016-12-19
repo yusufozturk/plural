@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"plural/data"
 	"strings"
+
+	"github.com/marshyski/plural/data"
 )
 
 func awsClient(route string) string {

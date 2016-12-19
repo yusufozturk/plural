@@ -14,14 +14,15 @@ package main
 import (
 	"flag"
 	"fmt"
-	"plural/cloud"
-	"plural/config"
-	"plural/data"
-	"plural/docker"
-	"plural/network"
-	"plural/packages"
-	"plural/system"
 	"time"
+
+	"github.com/marshyski/plural/cloud"
+	"github.com/marshyski/plural/config"
+	"github.com/marshyski/plural/data"
+	"github.com/marshyski/plural/docker"
+	"github.com/marshyski/plural/network"
+	"github.com/marshyski/plural/packages"
+	"github.com/marshyski/plural/system"
 )
 
 // Command-line flags
