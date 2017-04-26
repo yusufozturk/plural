@@ -1,7 +1,6 @@
 package packages
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -13,18 +12,15 @@ func Rpm() {
 	m := data.PluralJSON
 
 	rpmBin := exec.Command("ls", "/bin/rpm")
-	rpmBinOut, err := rpmBin.Output()
-	if err != nil {
-		fmt.Println(err)
-	}
+	rpmBinOut, _ := rpmBin.Output()
 	rpmqa := exec.Command("rpm", "-qa")
 	rpmSort := exec.Command("sort")
-	rpmqaOut, err := rpmqa.StdoutPipe()
+	rpmqaOut, _ := rpmqa.StdoutPipe()
 	rpmqa.Start()
 	rpmSort.Stdin = rpmqaOut
-	rpmOut, err := rpmSort.Output()
+	rpmOut, _ := rpmSort.Output()
 	rpmStr := string(rpmOut)
-	rpmSlice := strings.Split(rpmStr, "\n")
+	rpmSlice := strings.Split(strings.TrimSpace(rpmStr), "\n")
 
 	if string(rpmBinOut) != "" {
 		m["Packages"] = rpmSlice

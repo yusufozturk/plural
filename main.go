@@ -12,6 +12,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"time"
@@ -38,7 +39,7 @@ func init() {
 
 var usage = `Usage: plural [options] <args>
 
-    -d, --daemon       Run in daemon mode
+    -d, --daemon     Run in daemon mode
     -c, --config     Set configuration path, default path is /opt/plural/conf
     -o, --output     Output JSON file in a directory specified
 
@@ -61,7 +62,7 @@ func main() {
 
 		data.PluralJSON = make(map[string]interface{})
 		//fmt.Printf("%s %s INFO %s SHA256 checksum is %x\n", dateStamp, h.Hostname, file.Name(), hash.Sum(nil))
-		//network.Conns()
+		network.Conns()
 		network.DNS()
 		network.DomainName()
 		network.IP()
@@ -78,10 +79,8 @@ func main() {
 		system.Users()
 		system.UsersLoggedIn()
 
-		//fmt.Println(data.PluralJSON["Platform"].(string))
-		for k, v := range data.PluralJSON {
-			fmt.Println(k, v)
-		}
+		j, _ := json.Marshal(data.PluralJSON)
+		fmt.Println(string(j))
 
 		if !*daemonFlag {
 			break

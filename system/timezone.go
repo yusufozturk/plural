@@ -1,7 +1,6 @@
 package system
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -12,10 +11,7 @@ func TimeZone() {
 	m := data.PluralJSON
 
 	timezone := exec.Command("date", "+%Z")
-	timezoneOut, err := timezone.Output()
-	if err != nil {
-		fmt.Println(err)
-	}
+	timezoneOut, _ := timezone.Output()
 	timezoneStr := string(timezoneOut)
 	timezoneTrim := strings.TrimSpace(timezoneStr)
 

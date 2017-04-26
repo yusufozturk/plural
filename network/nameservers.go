@@ -29,7 +29,7 @@ func DNS() {
 		fmt.Println(dnsOut)
 	}
 	dnsStr := string(dnsOut)
-	dnsSlice := strings.Split(dnsStr, ",")
+	dnsSlice := strings.Split(strings.TrimSpace(dnsStr), "\n")
 	if string(dnsFileOut) != "" {
 		m["DNSNameserver"] = dnsSlice
 	}

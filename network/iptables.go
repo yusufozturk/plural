@@ -23,7 +23,7 @@ func IPTables() {
 	iptableGrep.Stdin = iptableLOut
 	iptableOut, err := iptableGrep.Output()
 	iptableStr := string(iptableOut)
-	iptableSlice := strings.Split(iptableStr, ",")
+	iptableSlice := strings.Split(strings.TrimSpace(iptableStr), "\n")
 
 	if string(iptableBinOut) != "" {
 		m["Iptables"] = iptableSlice

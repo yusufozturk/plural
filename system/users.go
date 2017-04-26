@@ -1,7 +1,6 @@
 package system
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -10,26 +9,16 @@ import (
 
 func UsersLoggedIn() {
 	m := data.PluralJSON
-
 	wBin := exec.Command("ls", "/usr/bin/w")
-	wBinOut, err := wBin.Output()
-	if err != nil {
-		fmt.Println(wBinOut)
-	}
+	wBinOut, _ := wBin.Output()
 	wh := exec.Command("w", "-h")
 	whAwk := exec.Command("awk", "{print$1\"-\"$2}")
-	whOut, err := wh.StdoutPipe()
-	if err != nil {
-		fmt.Println(whOut)
-	}
+	whOut, _ := wh.StdoutPipe()
 	wh.Start()
 	whAwk.Stdin = whOut
-	wOut, err := whAwk.Output()
-	if err != nil {
-		fmt.Println(wOut)
-	}
+	wOut, _ := whAwk.Output()
 	whStr := string(wOut)
-	wSlice := strings.Split(whStr, ",")
+	wSlice := strings.Split(strings.TrimSpace(whStr), "\n")
 
 	if string(wBinOut) != "" {
 		m["UsersLoggedin"] = wSlice
@@ -38,15 +27,9 @@ func UsersLoggedIn() {
 
 func Users() {
 	m := data.PluralJSON
-
-	passFile := exec.Command("ls", "/etc/passwd")
-	passFileOut, err := passFile.Output()
-	if err != nil {
-		fmt.Println(passFileOut)
-	}
 	passGrep := exec.Command("grep", "-v", "^#", "/etc/passwd")
-	passGrepOut, err := passGrep.Output()
+	passGrepOut, _ := passGrep.Output()
 	passStr := string(passGrepOut)
-	usersSlice := strings.Split(passStr, ",")
+	usersSlice := strings.Split(strings.TrimSpace(passStr), "\n")
 	m["Users"] = usersSlice
 }

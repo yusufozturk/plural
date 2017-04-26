@@ -19,7 +19,7 @@ func IPRoutes() {
 	iproute := exec.Command("ip", "route")
 	iprteOut, err := iproute.Output()
 	iprteStr := string(iprteOut)
-	iprteSlice := strings.Split(iprteStr, ",")
+	iprteSlice := strings.Split(strings.TrimSpace(iprteStr), "\n")
 
 	if string(iprteBinOut) != "" {
 		m["IPRoute"] = iprteSlice

@@ -28,8 +28,6 @@ func Conns() {
 
 	m["TCP4Listen"] = tcp4
 
-	//tcp4Replace := strings.Replace(tcp4String, ",\"\"]", "]", -1)
-
 	gonetstat6 := GOnetstat.Tcp6()
 	tcp6 := []string{}
 	for _, nettcp := range gonetstat6 {
@@ -47,6 +45,4 @@ func Conns() {
 	}
 
 	m["TCP6Listen"] = tcp6
-	//tcp6Replace := strings.Replace(tcp6String, ",\"\"]", "]", -1)
-
 }

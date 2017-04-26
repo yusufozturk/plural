@@ -1,7 +1,6 @@
 package system
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -12,14 +11,11 @@ func Audit() {
 	m := data.PluralJSON
 
 	auditBin := exec.Command("ls", "/sbin/auditctl")
-	auditBinOut, err := auditBin.Output()
-	if err != nil {
-		fmt.Println(err)
-	}
+	auditBinOut, _ := auditBin.Output()
 	audit := exec.Command("auditctl", "-l")
-	auditOut, err := audit.Output()
+	auditOut, _ := audit.Output()
 	auditStr := string(auditOut)
-	auditSlice := strings.Split(auditStr, "\n")
+	auditSlice := strings.Split(strings.TrimSpace(auditStr), "\n")
 
 	if string(auditBinOut) != "" {
 		m["AuditRules"] = auditSlice

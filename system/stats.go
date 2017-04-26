@@ -20,7 +20,8 @@ func Stats() {
 
 	m := data.PluralJSON
 
-	cpuCount, _ := cpu.Counts(true)
+	cpuinfo, _ := cpu.Info()
+	cpuCount := cpuinfo[0].Cores
 	v, _ := mem.VirtualMemory()
 	k, _ := disk.Usage("/")
 	h, _ := host.Info()
@@ -40,7 +41,7 @@ func Stats() {
 	loadfiveConv := strconv.FormatFloat(l.Load5, 'f', 6, 64)
 	load5 := strings.Split(loadfiveConv, ".")[0]
 
-	m["CPUCount"] = string(cpuCount)
+	m["CPUCount"] = cpuCount
 	m["Memoryused"] = memUsed
 	m["Memoryfree"] = memFree
 	m["Memorytotal"] = memTotal

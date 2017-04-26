@@ -1,7 +1,6 @@
 package packages
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -13,25 +12,16 @@ func Pip() {
 	m := data.PluralJSON
 
 	pipBin := exec.Command("which", "pip")
-	pipBinOut, err := pipBin.Output()
-	if err != nil {
-		fmt.Println(err)
-	}
+	pipBinOut, _ := pipBin.Output()
 	pipFree := exec.Command("pip", "freeze")
 	pipSort := exec.Command("sort")
-	pipFreeOut, err := pipFree.StdoutPipe()
-	if err != nil {
-		fmt.Println(err)
-	}
+	pipFreeOut, _ := pipFree.StdoutPipe()
 	pipFree.Start()
 	pipSort.Stdin = pipFreeOut
-	pipOut, err := pipSort.Output()
-	if err != nil {
-		fmt.Println(err)
-	}
+	pipOut, _ := pipSort.Output()
 	pipStr := string(pipOut)
 	pipReplace := strings.Replace(pipStr, "==", "-", -1)
-	pipSlice := strings.Split(pipReplace, "\n")
+	pipSlice := strings.Split(strings.TrimSpace(pipReplace), "\n")
 
 	if string(pipBinOut) != "" {
 		m["Pip"] = pipSlice

@@ -18,7 +18,7 @@ func Containers() {
 		endpoint := "unix:///var/run/docker.sock"
 		dockerClient, _ := docker.NewClient(endpoint)
 
-		containers, _ := dockerClient.ListContainers(docker.ListContainersOptions{All: false})
+		containers, _ := dockerClient.ListContainers(docker.ListContainersOptions{All: true})
 		ctrSlice := []string{}
 
 		for _, container := range containers {
