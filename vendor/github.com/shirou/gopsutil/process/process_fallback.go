@@ -1,4 +1,4 @@
-// +build !darwin,!linux,!freebsd,!windows
+// +build !darwin,!linux,!freebsd,!openbsd,!windows
 
 package process
 
@@ -78,6 +78,9 @@ func (p *Process) IOnice() (int32, error) {
 	return 0, common.ErrNotImplementedError
 }
 func (p *Process) Rlimit() ([]RlimitStat, error) {
+	return nil, common.ErrNotImplementedError
+}
+func (p *Process) RlimitUsage(_ bool) ([]RlimitStat, error) {
 	return nil, common.ErrNotImplementedError
 }
 func (p *Process) IOCounters() (*IOCountersStat, error) {

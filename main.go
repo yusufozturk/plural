@@ -15,21 +15,26 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/marshyski/plural/cloud"
 	"github.com/marshyski/plural/config"
+	"github.com/marshyski/plural/containers"
 	"github.com/marshyski/plural/data"
-	"github.com/marshyski/plural/docker"
 	"github.com/marshyski/plural/network"
 	"github.com/marshyski/plural/packages"
 	"github.com/marshyski/plural/system"
 )
 
 // Command-line flags
-var configFlag = flag.String("config", "", "  Set configuration path, default is /opt/plural/conf")
-var daemonFlag = flag.Bool("daemon", false, "  Run in daemon mode")
-var outputFlag = flag.String("output", "", "  Output JSON file in a directory specified")
+var (
+	configFlag = flag.String("config", "", "  Set configuration path, default is /opt/plural/conf")
+	daemonFlag = flag.Bool("daemon", false, "  Run in daemon mode")
+	outputFlag = flag.String("output", "", "  Output JSON file in a directory specified")
+	d          data.PluralJSON
+	wg         sync.WaitGroup
+)
 
 func init() {
 	flag.StringVar(configFlag, "c", "", "  Set configuration path, default is /opt/plural/conf")
@@ -58,28 +63,82 @@ func main() {
 
 	flag.Parse()
 
+	timeN := time.Now()
+	lastRun := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", timeN.Year(), timeN.Month(), timeN.Day(), timeN.Hour(), timeN.Minute(), timeN.Second())
+
+	wg.Add(17)
 	for {
+		go func() {
+			defer wg.Done()
+			network.Conns(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			network.DNS(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			network.DomainName(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			network.IP(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			network.IPRoutes(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			network.IPTables(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			cloud.Aws(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			packages.Deb(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			packages.Pip(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			packages.Rpm(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			packages.Gem(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			containers.Docker(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			system.Audit(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			system.Stats(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			system.Users(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			system.UsersLoggedIn(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			d.Lastrun = lastRun
+		}()
+		wg.Wait()
 
-		data.PluralJSON = make(map[string]interface{})
-		//fmt.Printf("%s %s INFO %s SHA256 checksum is %x\n", dateStamp, h.Hostname, file.Name(), hash.Sum(nil))
-		network.Conns()
-		network.DNS()
-		network.DomainName()
-		network.IP()
-		network.IPRoutes()
-		network.IPTables()
-		cloud.Aws()
-		packages.Deb()
-		packages.Pip()
-		packages.Rpm()
-		packages.Gem()
-		docker.Containers()
-		system.Audit()
-		system.Stats()
-		system.Users()
-		system.UsersLoggedIn()
-
-		j, _ := json.Marshal(data.PluralJSON)
+		j, _ := json.Marshal(d)
 		fmt.Println(string(j))
 
 		if !*daemonFlag {

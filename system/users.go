@@ -7,29 +7,39 @@ import (
 	"github.com/marshyski/plural/data"
 )
 
-func UsersLoggedIn() {
-	m := data.PluralJSON
+func UsersLoggedIn(d *data.PluralJSON) {
 	wBin := exec.Command("ls", "/usr/bin/w")
-	wBinOut, _ := wBin.Output()
+	wBinOut, err := wBin.Output()
+	if err != nil {
+		return
+	}
 	wh := exec.Command("w", "-h")
 	whAwk := exec.Command("awk", "{print$1\"-\"$2}")
-	whOut, _ := wh.StdoutPipe()
+	whOut, err := wh.StdoutPipe()
+	if err != nil {
+		return
+	}
 	wh.Start()
 	whAwk.Stdin = whOut
-	wOut, _ := whAwk.Output()
+	wOut, err := whAwk.Output()
+	if err != nil {
+		return
+	}
 	whStr := string(wOut)
 	wSlice := strings.Split(strings.TrimSpace(whStr), "\n")
 
 	if string(wBinOut) != "" {
-		m["UsersLoggedin"] = wSlice
+		d.UsersLoggedin = wSlice
 	}
 }
 
-func Users() {
-	m := data.PluralJSON
+func Users(d *data.PluralJSON) {
 	passGrep := exec.Command("grep", "-v", "^#", "/etc/passwd")
-	passGrepOut, _ := passGrep.Output()
+	passGrepOut, err := passGrep.Output()
+	if err != nil {
+		return
+	}
 	passStr := string(passGrepOut)
 	usersSlice := strings.Split(strings.TrimSpace(passStr), "\n")
-	m["Users"] = usersSlice
+	d.Users = usersSlice
 }

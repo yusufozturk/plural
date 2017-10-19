@@ -7,23 +7,31 @@ import (
 	"github.com/marshyski/plural/data"
 )
 
-func Gem() {
-	m := data.PluralJSON
+func Gem(d *data.PluralJSON) {
 
 	gemBin := exec.Command("which", "gem")
-	gemBinOut, _ := gemBin.Output()
+	gemBinOut, err := gemBin.Output()
+	if err != nil {
+		return
+	}
 	gemList := exec.Command("gem", "list")
 	gemGrep := exec.Command("grep", "^[a-zA-Z]")
-	gemListOut, _ := gemList.StdoutPipe()
+	gemListOut, err := gemList.StdoutPipe()
+	if err != nil {
+		return
+	}
 	gemList.Start()
 	gemGrep.Stdin = gemListOut
-	gemOut, _ := gemGrep.Output()
+	gemOut, err := gemGrep.Output()
+	if err != nil {
+		return
+	}
 	gemStr := string(gemOut)
 	gemReplace := strings.Replace(gemStr, " (", "-", -1)
 	gemReplace2 := strings.Replace(gemReplace, ")", "", -1)
 	gemSlice := strings.Split(strings.TrimSpace(gemReplace2), "\n")
 
 	if string(gemBinOut) != "" {
-		m["Gem"] = gemSlice
+		d.Gem = gemSlice
 	}
 }

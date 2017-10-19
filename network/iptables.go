@@ -1,31 +1,38 @@
 package network
 
 import (
-	"fmt"
 	"os/exec"
+	"runtime"
 	"strings"
 
 	"github.com/marshyski/plural/data"
 )
 
-func IPTables() {
-	m := data.PluralJSON
+func IPTables(d *data.PluralJSON) {
 
-	iptableBin := exec.Command("ls", "/sbin/iptables")
-	iptableBinOut, err := iptableBin.Output()
-	if err != nil {
-		fmt.Println(err)
-	}
-	iptableL := exec.Command("iptables", "-L")
-	iptableGrep := exec.Command("grep", "-v", "^Chain\\|target\\|^$")
-	iptableLOut, err := iptableL.StdoutPipe()
-	iptableL.Start()
-	iptableGrep.Stdin = iptableLOut
-	iptableOut, err := iptableGrep.Output()
-	iptableStr := string(iptableOut)
-	iptableSlice := strings.Split(strings.TrimSpace(iptableStr), "\n")
+	if runtime.GOOS == "linux" {
+		iptableBin := exec.Command("ls", "/sbin/iptables")
+		iptableBinOut, err := iptableBin.Output()
+		if err != nil {
+			return
+		}
+		iptableL := exec.Command("iptables", "-L")
+		iptableGrep := exec.Command("grep", "-v", "^Chain\\|target\\|^$")
+		iptableLOut, err := iptableL.StdoutPipe()
+		if err != nil {
+			return
+		}
+		iptableL.Start()
+		iptableGrep.Stdin = iptableLOut
+		iptableOut, err := iptableGrep.Output()
+		if err != nil {
+			return
+		}
+		iptableStr := string(iptableOut)
+		iptableSlice := strings.Split(strings.TrimSpace(iptableStr), "\n")
 
-	if string(iptableBinOut) != "" {
-		m["Iptables"] = iptableSlice
+		if string(iptableBinOut) != "" {
+			d.Iptables = iptableSlice
+		}
 	}
 }

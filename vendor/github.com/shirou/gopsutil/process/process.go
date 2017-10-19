@@ -26,6 +26,7 @@ type Process struct {
 	gids           []int32
 	numThreads     int32
 	memInfo        *MemoryInfoStat
+	sigInfo        *SignalInfoStat
 
 	lastCPUTimes *cpu.TimesStat
 	lastCPUTime  time.Time
@@ -37,15 +38,27 @@ type OpenFilesStat struct {
 }
 
 type MemoryInfoStat struct {
-	RSS  uint64 `json:"rss"`  // bytes
-	VMS  uint64 `json:"vms"`  // bytes
-	Swap uint64 `json:"swap"` // bytes
+	RSS    uint64 `json:"rss"`    // bytes
+	VMS    uint64 `json:"vms"`    // bytes
+	Data   uint64 `json:"data"`   // bytes
+	Stack  uint64 `json:"stack"`  // bytes
+	Locked uint64 `json:"locked"` // bytes
+	Swap   uint64 `json:"swap"`   // bytes
+}
+
+type SignalInfoStat struct {
+	PendingProcess uint64 `json:"pending_process"`
+	PendingThread  uint64 `json:"pending_thread"`
+	Blocked        uint64 `json:"blocked"`
+	Ignored        uint64 `json:"ignored"`
+	Caught         uint64 `json:"caught"`
 }
 
 type RlimitStat struct {
-	Resource int32 `json:"resource"`
-	Soft     int32 `json:"soft"`
-	Hard     int32 `json:"hard"`
+	Resource int32  `json:"resource"`
+	Soft     int32  `json:"soft"` //TODO too small. needs to be uint64
+	Hard     int32  `json:"hard"` //TODO too small. needs to be uint64
+	Used     uint64 `json:"used"`
 }
 
 type IOCountersStat struct {
@@ -59,6 +72,27 @@ type NumCtxSwitchesStat struct {
 	Voluntary   int64 `json:"voluntary"`
 	Involuntary int64 `json:"involuntary"`
 }
+
+// Resource limit constants are from /usr/include/x86_64-linux-gnu/bits/resource.h
+// from libc6-dev package in Ubuntu 16.10
+const (
+	RLIMIT_CPU        int32 = 0
+	RLIMIT_FSIZE      int32 = 1
+	RLIMIT_DATA       int32 = 2
+	RLIMIT_STACK      int32 = 3
+	RLIMIT_CORE       int32 = 4
+	RLIMIT_RSS        int32 = 5
+	RLIMIT_NPROC      int32 = 6
+	RLIMIT_NOFILE     int32 = 7
+	RLIMIT_MEMLOCK    int32 = 8
+	RLIMIT_AS         int32 = 9
+	RLIMIT_LOCKS      int32 = 10
+	RLIMIT_SIGPENDING int32 = 11
+	RLIMIT_MSGQUEUE   int32 = 12
+	RLIMIT_NICE       int32 = 13
+	RLIMIT_RTPRIO     int32 = 14
+	RLIMIT_RTTIME     int32 = 15
+)
 
 func (p Process) String() string {
 	s, _ := json.Marshal(p)
@@ -165,3 +199,20 @@ func (p *Process) MemoryPercent() (float32, error) {
 
 	return (100 * float32(used) / float32(total)), nil
 }
+// CPU_Percent returns how many percent of the CPU time this process uses
+func (p *Process) CPUPercent() (float64, error) {
+        crt_time, err := p.CreateTime()
+        if err != nil {
+                return 0, err
+        }
+
+
+        cpu, err := p.Times()
+        if err != nil {
+                return 0, err
+        }
+
+
+        return (100 * (cpu.Total()) / float64(time.Now().Unix()-(crt_time/1000))), nil
+}
+

@@ -16,9 +16,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-func Stats() {
-
-	m := data.PluralJSON
+func Stats(d *data.PluralJSON) {
 
 	cpuinfo, _ := cpu.Info()
 	cpuCount := cpuinfo[0].Cores
@@ -34,29 +32,25 @@ func Stats() {
 	diskUsed := strings.Split(diskusedConv, ".")[0]
 	diskFree := humanize.Bytes(k.Free)
 	diskTotal := humanize.Bytes(k.Total)
-	loadoneConv := strconv.FormatFloat(l.Load1, 'f', 6, 64)
-	load1 := strings.Split(loadoneConv, ".")[0]
-	loadfifteenConv := strconv.FormatFloat(l.Load15, 'f', 6, 64)
-	load15 := strings.Split(loadfifteenConv, ".")[0]
-	loadfiveConv := strconv.FormatFloat(l.Load5, 'f', 6, 64)
-	load5 := strings.Split(loadfiveConv, ".")[0]
 
-	m["CPUCount"] = cpuCount
-	m["Memoryused"] = memUsed
-	m["Memoryfree"] = memFree
-	m["Memorytotal"] = memTotal
-	m["Diskused"] = diskUsed
-	m["Diskfree"] = diskFree
-	m["Disktotal"] = diskTotal
-	m["Load1"] = load1
-	m["Load5"] = load5
-	m["Load15"] = load15
-	m["Hostname"] = h.Hostname
-	m["Platform"] = h.Platform
-	m["Platformfamily"] = h.PlatformFamily
-	m["Platformverison"] = h.PlatformVersion
-	m["Kernelversion"] = h.KernelVersion
-	m["Os"] = h.OS
-	m["Uptime"] = string(time.Duration(h.Uptime) * time.Second)
-	m["Environment"] = config.ConfigStr("environment")
+	d.CPUCount = cpuCount
+	d.Memoryused = memUsed
+	d.Memoryfree = memFree
+	d.Memorytotal = memTotal
+	d.Diskused = diskUsed
+	d.Diskfree = diskFree
+	d.Disktotal = diskTotal
+	d.Load1 = l.Load1
+	d.Load5 = l.Load5
+	d.Load15 = l.Load15
+	d.Hostname = h.Hostname
+	d.Platform = h.Platform
+	d.Platformfamily = h.PlatformFamily
+	d.Platformverison = h.PlatformVersion
+	d.Kernelversion = h.KernelVersion
+	d.Virtualizationrole = h.VirtualizationRole
+	d.Os = h.OS
+	// Convert to days
+	d.Uptime = int64(time.Duration(h.Uptime) / 86400)
+	d.Environment = config.ConfigStr("environment")
 }

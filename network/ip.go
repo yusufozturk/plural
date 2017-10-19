@@ -1,16 +1,15 @@
 package network
 
 import (
-	"fmt"
 	"net"
 
 	"github.com/marshyski/plural/data"
 )
 
-func IP() {
+func IP(d *data.PluralJSON) {
 	ifaces, err := net.Interfaces()
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 
 	for _, iface := range ifaces {
@@ -24,7 +23,7 @@ func IP() {
 
 		addrs, err := iface.Addrs()
 		if err != nil {
-			fmt.Println(err)
+			return
 		}
 
 		for _, addr := range addrs {
@@ -45,8 +44,7 @@ func IP() {
 				continue
 			}
 
-			m := data.PluralJSON
-			m["Ipaddress"] = ip.String()
+			d.Ipaddress = ip.String()
 		}
 	}
 }

@@ -1,12 +1,9 @@
 MAIN_PACKAGE := plural
-BUILT_ON := $(date)
-COMMIT_HASH := $(git log -n 1 --pretty=format:"%H")
+BUILT_ON := $(shell date)
+COMMIT_HASH := $(shell git log -n 1 --pretty=format:"%H")
 GO_LINUX := GOOS=linux GOARCH=amd64
 GO_OSX := GOOS=darwin GOARCH=amd64
-LDFLAGS := '-X "main.builtOn=$(BUILT_ON)" -X "main.commitHash=$(COMMIT_HASH)" -s -w'
-
-test:
-	go test -p=1 -cover `go list ./... | sed -n '1!p' | grep -v /vendor/` -v
+LDFLAGS := '-X "main.builtOn=$(BUILT_ON)" -X "main.commitHash=$(COMMIT_HASH)"'
 
 osx:
 	$(GO_OSX) go build -o $(MAIN_PACKAGE) -ldflags $(LDFLAGS) .
