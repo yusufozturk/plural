@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/marshyski/plural/config"
@@ -37,7 +38,7 @@ func init() {
 }
 
 func Elastic(d *data.PluralJSON) {
-	url := fmt.Sprintf("%s://%s:%s/%s/%s", scheme, host, port, env, d.Hostname)
+	url := fmt.Sprintf("%s://%s:%s/%s/%s", scheme, host, port, env, strings.Replace(d.Ipaddress, ".", "", 3))
 	body := new(bytes.Buffer)
 	json.NewEncoder(body).Encode(d)
 	_, err := c.Post(url, "application/json; charset=UTF-8", body)
