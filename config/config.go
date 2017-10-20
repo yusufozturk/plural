@@ -20,7 +20,6 @@ func init() {
 	viper.SetDefault("interval", "300")
 	viper.SetDefault("username", "")
 	viper.SetDefault("password", "")
-	viper.SetDefault("overwrite", "")
 	viper.SetDefault("secure", "false")
 }
 
