@@ -56,9 +56,7 @@ func main() {
 
 	flag.Parse()
 
-	timeN := time.Now()
 	for {
-		lastRun := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", timeN.Year(), timeN.Month(), timeN.Day(), timeN.Hour(), timeN.Minute(), timeN.Second())
 		var (
 			d  data.PluralJSON
 			wg sync.WaitGroup
@@ -130,7 +128,7 @@ func main() {
 		}()
 		go func() {
 			defer wg.Done()
-			d.Lastrun = lastRun
+			d.Lastrun = time.Now().Format(time.RFC3339)
 		}()
 		wg.Wait()
 
