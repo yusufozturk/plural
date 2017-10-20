@@ -2,64 +2,46 @@ package db
 
 import (
 	"bytes"
+	"crypto/tls"
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"log"
 	"net/http"
+	"time"
+
+	"github.com/marshyski/plural/config"
+	"github.com/marshyski/plural/data"
 )
 
-func Elastic() {
+var (
+	tr = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	c = &http.Client{
+		Timeout:   500 * time.Millisecond,
+		Transport: tr,
+	}
+	host   = config.ConfigStr("elastic_host")
+	port   = config.ConfigStr("elastic_port")
+	env    = config.ConfigStr("environment")
+	sec    = config.ConfigBool("secure")
+	scheme string
+)
 
-// HTTP client timeout
-var timeout = time.Duration(300 * time.Millisecond)
-
-func dialTimeout(network, addr string) (net.Conn, error) {
-	return net.DialTimeout(network, addr, timeout)
+func init() {
+	if sec {
+		scheme = "https"
+	} else {
+		scheme = "http"
+	}
 }
 
-	transport := http.Transport{
-		Dial: dialTimeout,
-	}
-
-	client := http.Client{
-		Transport: &transport,
-	}
-
-	// Check to see if ElasticSearch server is up
-	elasticResponse, err := client.Get(elastic_url)
-	if elasticResponse != nil {
-		jsonStr, err := ioutil.ReadFile(filename)
-		if err != nil {
-			fmt.Println(err.Error())
-			return
-		}
-		fmt.Println(dateStamp, h.Hostname, "INFO elasticsearch endpoint:", elastic_url)
-		if overwrite == "enable" {
-			reqDelete, err := http.NewRequest("DELETE", elastic_url, nil)
-			if username != "undef" {
-				reqDelete.SetBasicAuth(username, password)
-			}
-			respDelete, err := http.DefaultClient.Do(reqDelete)
-			fmt.Println(dateStamp, h.Hostname, "DELETE elasticsearch type status:", respDelete.Status)
-			if err != nil {
-				fmt.Println(err.Error())
-			}
-		}
-		reqPost, err := http.NewRequest("POST", elastic_url, bytes.NewBuffer(jsonStr))
-		if password != "undef" {
-			reqPost.SetBasicAuth(username, password)
-		}
-		reqPost.Header.Set("Content-Type", "application/json")
-
-		clientReq := &http.Client{}
-		respPost, err := clientReq.Do(reqPost)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-		defer respPost.Body.Close()
-		fmt.Println(dateStamp, h.Hostname, "POST json elasticsearch type status:", respPost.Status)
-		postBody, _ := ioutil.ReadAll(respPost.Body)
-		fmt.Println(dateStamp, h.Hostname, "POST response body:", string(postBody))
-	} else {
-		fmt.Println(dateStamp, h.Hostname, "FAIL unable to connect to elasticeearch server:", "http://"+elastic_host+":"+elastic_port)
+func Elastic(d *data.PluralJSON) {
+	url := fmt.Sprintf("%s://%s:%s/%s/%s", scheme, host, port, env, d.Hostname)
+	body := new(bytes.Buffer)
+	json.NewEncoder(body).Encode(d)
+	_, err := c.Post(url, "application/json; charset=UTF-8", body)
+	if err != nil {
+		log.Printf("Error: %s", err)
 	}
 }

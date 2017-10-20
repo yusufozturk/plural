@@ -22,6 +22,7 @@ import (
 	"github.com/marshyski/plural/config"
 	"github.com/marshyski/plural/containers"
 	"github.com/marshyski/plural/data"
+	"github.com/marshyski/plural/db"
 	"github.com/marshyski/plural/network"
 	"github.com/marshyski/plural/packages"
 	"github.com/marshyski/plural/system"
@@ -140,6 +141,9 @@ func main() {
 			fmt.Println(string(j))
 			break
 		}
+
+		db.Elastic(&d)
+
 		time.Sleep(time.Duration(config.ConfigInt("interval")) * time.Second)
 	}
 }

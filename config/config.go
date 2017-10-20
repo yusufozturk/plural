@@ -21,14 +21,17 @@ func init() {
 	viper.SetDefault("username", "")
 	viper.SetDefault("password", "")
 	viper.SetDefault("overwrite", "")
+	viper.SetDefault("secure", "false")
 }
 
 func ConfigStr(key string) string {
-
 	return viper.GetString(key)
 }
 
 func ConfigInt(key string) int {
-
 	return viper.GetInt(key)
+}
+
+func ConfigBool(key string) bool {
+	return viper.GetBool(key)
 }
