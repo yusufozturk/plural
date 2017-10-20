@@ -11,11 +11,6 @@ import (
 func IPTables(d *data.PluralJSON) {
 
 	if runtime.GOOS == "linux" {
-		iptableBin := exec.Command("ls", "/sbin/iptables")
-		iptableBinOut, err := iptableBin.Output()
-		if err != nil {
-			return
-		}
 		iptableL := exec.Command("iptables", "-L")
 		iptableGrep := exec.Command("grep", "-v", "^Chain\\|target\\|^$")
 		iptableLOut, err := iptableL.StdoutPipe()
@@ -31,7 +26,7 @@ func IPTables(d *data.PluralJSON) {
 		iptableStr := string(iptableOut)
 		iptableSlice := strings.Split(strings.TrimSpace(iptableStr), "\n")
 
-		if string(iptableBinOut) != "" {
+		if iptableSlice != nil {
 			d.Iptables = iptableSlice
 		}
 	}

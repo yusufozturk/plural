@@ -9,11 +9,6 @@ import (
 
 func Gem(d *data.PluralJSON) {
 
-	gemBin := exec.Command("which", "gem")
-	gemBinOut, err := gemBin.Output()
-	if err != nil {
-		return
-	}
 	gemList := exec.Command("gem", "list")
 	gemGrep := exec.Command("grep", "^[a-zA-Z]")
 	gemListOut, err := gemList.StdoutPipe()
@@ -31,7 +26,7 @@ func Gem(d *data.PluralJSON) {
 	gemReplace2 := strings.Replace(gemReplace, ")", "", -1)
 	gemSlice := strings.Split(strings.TrimSpace(gemReplace2), "\n")
 
-	if string(gemBinOut) != "" {
+	if gemSlice != nil {
 		d.Gem = gemSlice
 	}
 }

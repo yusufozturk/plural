@@ -10,11 +10,6 @@ import (
 
 func Rpm(d *data.PluralJSON) {
 	if runtime.GOOS == "linux" {
-		rpmBin := exec.Command("ls", "/bin/rpm")
-		rpmBinOut, err := rpmBin.Output()
-		if err != nil {
-			return
-		}
 		rpmqa := exec.Command("rpm", "-qa")
 		rpmSort := exec.Command("sort")
 		rpmqaOut, err := rpmqa.StdoutPipe()
@@ -30,7 +25,7 @@ func Rpm(d *data.PluralJSON) {
 		rpmStr := string(rpmOut)
 		rpmSlice := strings.Split(strings.TrimSpace(rpmStr), "\n")
 
-		if string(rpmBinOut) != "" {
+		if rpmSlice != nil {
 			d.Packages = rpmSlice
 		}
 	}

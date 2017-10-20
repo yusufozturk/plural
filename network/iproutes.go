@@ -11,11 +11,6 @@ import (
 func IPRoutes(d *data.PluralJSON) {
 
 	if runtime.GOOS == "linux" {
-		iprteBin := exec.Command("ls", "/sbin/ip")
-		iprteBinOut, err := iprteBin.Output()
-		if err != nil {
-			return
-		}
 		iproute := exec.Command("ip", "route")
 		iprteOut, err := iproute.Output()
 		if err != nil {
@@ -24,7 +19,7 @@ func IPRoutes(d *data.PluralJSON) {
 		iprteStr := string(iprteOut)
 		iprteSlice := strings.Split(strings.TrimSpace(iprteStr), "\n")
 
-		if string(iprteBinOut) != "" {
+		if iprteSlice != nil {
 			d.IPRoute = iprteSlice
 		}
 	}

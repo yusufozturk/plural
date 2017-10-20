@@ -9,11 +9,6 @@ import (
 
 func DNS(d *data.PluralJSON) {
 
-	dnsFile := exec.Command("ls", "/etc/resolv.conf")
-	dnsFileOut, err := dnsFile.Output()
-	if err != nil {
-		return
-	}
 	dnsGrep := exec.Command("grep", "nameserver", "/etc/resolv.conf")
 	dnsAwk := exec.Command("awk", "{print$2}")
 	dnsGrepOut, err := dnsGrep.StdoutPipe()
@@ -28,7 +23,7 @@ func DNS(d *data.PluralJSON) {
 	}
 	dnsStr := string(dnsOut)
 	dnsSlice := strings.Split(strings.TrimSpace(dnsStr), "\n")
-	if string(dnsFileOut) != "" {
+	if dnsSlice != nil {
 		d.DNSNameserver = dnsSlice
 	}
 }

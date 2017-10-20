@@ -27,7 +27,6 @@ import (
 	"github.com/marshyski/plural/system"
 )
 
-// Command-line flags
 var (
 	configFlag = flag.String("config", "", "  Set configuration path, default is /opt/plural/conf")
 	daemonFlag = flag.Bool("daemon", false, "  Run in daemon mode")

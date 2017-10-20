@@ -50,12 +50,6 @@
   revision = "a08125f5157d481dd0d0355c021467bd8c84eb6d"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/dustin/go-humanize"
-  packages = ["."]
-  revision = "77ed807830b4df581417e7f89eb81d4872832b72"
-
-[[projects]]
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
   revision = "629574ca2a5df945712d3079857300b5e4da0236"
@@ -104,9 +98,15 @@
 
 [[projects]]
   name = "github.com/shirou/gopsutil"
-  packages = ["cpu","disk","host","internal/common","load","mem","process"]
+  packages = ["cpu","disk","host","internal/common","load","mem","net","process"]
   revision = "6e221c482653ef05c9f6a7bf71ddceea0e40bac5"
   version = "v2.17.09"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/shirou/w32"
+  packages = ["."]
+  revision = "bb4de0191aa41b5507caa14b0650cdbddcd9280b"
 
 [[projects]]
   branch = "master"
@@ -171,6 +171,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "51c9fb4874d95963926e21af46cf3f50158b55d0b507879ea39f73adedc634fd"
+  inputs-digest = "681fd60f4567df33e94a8093ad15d33b4811c8668ce67daf96185eb18a15efa9"
   solver-name = "gps-cdcl"
   solver-version = 1

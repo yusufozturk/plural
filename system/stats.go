@@ -1,19 +1,19 @@
 package system
 
 import (
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/marshyski/plural/config"
 	"github.com/marshyski/plural/data"
 
-	"github.com/dustin/go-humanize"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
+)
+
+const (
+	gb   = 1073741824
+	days = 86400
 )
 
 func Stats(d *data.PluralJSON) {
@@ -24,14 +24,12 @@ func Stats(d *data.PluralJSON) {
 	k, _ := disk.Usage("/")
 	h, _ := host.Info()
 	l, _ := load.Avg()
-	memusedConv := strconv.FormatFloat(v.UsedPercent, 'f', 6, 64)
-	memUsed := strings.Split(memusedConv, ".")[0]
-	memFree := humanize.Bytes(v.Free)
-	memTotal := humanize.Bytes(v.Total)
-	diskusedConv := strconv.FormatFloat(k.UsedPercent, 'f', 6, 64)
-	diskUsed := strings.Split(diskusedConv, ".")[0]
-	diskFree := humanize.Bytes(k.Free)
-	diskTotal := humanize.Bytes(k.Total)
+	memUsed := v.Used / gb
+	memFree := v.Free / gb
+	memTotal := v.Total / gb
+	diskUsed := k.Used / gb
+	diskFree := k.Free / gb
+	diskTotal := k.Total / gb
 
 	d.CPUCount = cpuCount
 	d.Memoryused = memUsed
@@ -50,7 +48,6 @@ func Stats(d *data.PluralJSON) {
 	d.Kernelversion = h.KernelVersion
 	d.Virtualizationrole = h.VirtualizationRole
 	d.Os = h.OS
-	// Convert to days
-	d.Uptime = int64(time.Duration(h.Uptime) / 86400)
+	d.Uptime = h.Uptime / days
 	d.Environment = config.ConfigStr("environment")
 }

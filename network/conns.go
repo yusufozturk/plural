@@ -12,7 +12,7 @@ import (
 func Conns(d *data.PluralJSON) {
 	if runtime.GOOS == "linux" {
 		gonetstat4 := GOnetstat.Tcp()
-		tcp4 := []string{}
+		var tcp4 []string
 		for _, nettcp := range gonetstat4 {
 			if nettcp.State == "LISTEN" {
 				ipPort := new(bytes.Buffer)
@@ -27,10 +27,12 @@ func Conns(d *data.PluralJSON) {
 			}
 		}
 
-		d.TCP4Listen = tcp4
+		if tcp4 != nil {
+			d.TCP4Listen = tcp4
+		}
 
 		gonetstat6 := GOnetstat.Tcp6()
-		tcp6 := []string{}
+		var tcp6 []string
 		for _, nettcp := range gonetstat6 {
 			if nettcp.State == "LISTEN" {
 				ipPort := new(bytes.Buffer)
@@ -45,6 +47,8 @@ func Conns(d *data.PluralJSON) {
 			}
 		}
 
-		d.TCP6Listen = tcp6
+		if tcp6 != nil {
+			d.TCP6Listen = tcp6
+		}
 	}
 }

@@ -26,10 +26,6 @@
   name = "github.com/drael/GOnetstat"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/dustin/go-humanize"
-
-[[constraint]]
   name = "github.com/fsouza/go-dockerclient"
   revision = "500ce4a511436e00d4b60c72aed8ead1a5c4c822"
 

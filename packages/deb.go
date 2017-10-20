@@ -10,11 +10,6 @@ import (
 
 func Deb(d *data.PluralJSON) {
 	if runtime.GOOS == "linux" {
-		dpkgBin := exec.Command("ls", "/usr/bin/dpkg")
-		dpkgBinOut, err := dpkgBin.Output()
-		if err != nil {
-			return
-		}
 		dpkg := exec.Command("dpkg", "-l")
 		dpkgAwk := exec.Command("awk", "/^[a-z]/{print$2\"-\"$3}")
 		dpkgLOut, err := dpkg.StdoutPipe()
@@ -30,7 +25,7 @@ func Deb(d *data.PluralJSON) {
 		dpkgStr := string(dpkgOut)
 		dpkgSlice := strings.Split(strings.TrimSpace(dpkgStr), "\n")
 
-		if string(dpkgBinOut) != "" {
+		if dpkgSlice != nil {
 			d.Packages = dpkgSlice
 		}
 	}

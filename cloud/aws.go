@@ -39,8 +39,7 @@ func Aws(d *data.PluralJSON) {
 			d.Ec2AvailabilityZone = awsClient("placement/availability-zone")
 			d.Ec2Profile = awsClient("profile")
 			d.Ec2PublicIP4 = awsClient("public-ipv4")
-			securityGroupSplit := strings.Split(strings.TrimSpace(awsClient("security-groups")), "\n")
-			d.Ec2SecurityGroups = securityGroupSplit
+			d.Ec2SecurityGroups = strings.Split(strings.TrimSpace(awsClient("security-groups")), "\n")
 		}
 	}
 }

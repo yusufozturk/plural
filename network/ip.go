@@ -44,7 +44,9 @@ func IP(d *data.PluralJSON) {
 				continue
 			}
 
-			d.Ipaddress = ip.String()
+			if ip.String() != "" {
+				d.Ipaddress = ip.String()
+			}
 		}
 	}
 }

@@ -18,6 +18,8 @@ func TimeZone(d *data.PluralJSON) {
 		timezoneStr := string(timezoneOut)
 		timezoneTrim := strings.TrimSpace(timezoneStr)
 
-		d.Timezone = timezoneTrim
+		if timezoneTrim != "" {
+			d.Timezone = timezoneTrim
+		}
 	}
 }
