@@ -24,22 +24,24 @@ func IPRoutes(d *data.PluralJSON) {
 		}
 	}
 
-	// if runtime.GOOS == "darwin" {
-	// 	iprteBin := exec.Command("ls", "/usr/sbin/netstat")
-	// 	iprteBinOut, err := iprteBin.Output()
-	// 	if err != nil {
-	// 		return
-	// 	}
-	// 	iproute := exec.Command("netstat", "-rn")
-	// 	iprteOut, err := iproute.Output()
-	// 	if err != nil {
-	// 		return
-	// 	}
-	// 	iprteStr := string(iprteOut)
-	// 	iprteSlice := strings.Split(strings.TrimSpace(iprteStr), "\n")
+	if runtime.GOOS == "darwin" {
+		net := exec.Command("netstat", "-rn")
+		netGrep := exec.Command("grep", "-v", "Internet\\|Routing\\|Destination\\|^$")
+		netOut, err := net.StdoutPipe()
+		if err != nil {
+			return
+		}
+		net.Start()
+		netGrep.Stdin = netOut
+		netsOut, err := netGrep.Output()
+		if err != nil {
+			return
+		}
+		netsStr := string(netsOut)
+		netsSlice := strings.Split(strings.TrimSpace(netsStr), "\n")
 
-	// 	if string(iprteBinOut) != "" {
-	// 		d.IPRoute = iprteSlice
-	// 	}
-	// }
+		if netsSlice != nil {
+			d.IPRoute = netsSlice
+		}
+	}
 }

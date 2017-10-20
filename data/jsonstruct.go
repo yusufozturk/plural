@@ -39,7 +39,7 @@ type PluralJSON struct {
 	TCP4Listen           []string `json:"tcp4_listen,omitempty"`
 	TCP6Listen           []string `json:"tcp6_listen,omitempty"`
 	Timezone             string   `json:"timezone,omitempty"`
-	Uptime               uint64   `json:"uptime,omitempty"`
+	Uptime               uint64   `json:"uptime_days,omitempty"`
 	Users                []string `json:"users,omitempty"`
 	UsersLoggedin        []string `json:"users_loggedin,omitempty"`
 	Virtualizationrole   string   `json:"virtualization_role,omitempty"`

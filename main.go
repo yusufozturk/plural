@@ -29,19 +29,19 @@ import (
 )
 
 var (
-	configFlag = flag.String("config", "", "  Set configuration path, default is /opt/plural/conf")
+	configFlag = flag.String("config", "", "  Set configuration path, defaults are ['./','/etc/plural/conf','/opt/plural/conf','./conf']")
 	daemonFlag = flag.Bool("daemon", false, "  Run in daemon mode")
 )
 
 func init() {
-	flag.StringVar(configFlag, "c", "", "  Set configuration path, default is /opt/plural/conf")
+	flag.StringVar(configFlag, "c", "", "  Set configuration path, defaults are ['./','/etc/plural/conf','/opt/plural/conf','./conf']")
 	flag.BoolVar(daemonFlag, "d", false, "  Run in daemon mode")
 }
 
 var usage = `Usage: plural [options] <args>
 
     -d, --daemon     Run in daemon mode
-    -c, --config     Set configuration path, default path is /opt/plural/conf
+    -c, --config     Set configuration path, defaults are ['./','/etc/plural/conf','/opt/plural/conf','./conf']
 
 Example:       plural -d -c /opt/plural/conf
 

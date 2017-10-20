@@ -8,21 +8,45 @@
 2. [Install Dependencies](#install-dependencies)
     * [Server](#server)
     * [Client](#client)
-3. [Build Dependencies](#build-dependencies)
-4. [Command-Line Arguments](#command-line-arguments)
-5. [Configuration](#configuration)
-5. [Log Output Example](#log-output-example)
-6. [Platforms Tested On](#platforms-tested-on)
-7. [Screenshots](#screenshots)
+3. [Command-Line Arguments](#command-line-arguments)
+4. [Configuration](#configuration)
+5. [Platforms Tested On](#platforms-tested-on)
+6. [Screenshots](#screenshots)
 
 
 ## Overview
 
-Ever wanted a dynamic inventory, search, and visualization into your server environments?  
+A lightweight system information collector for storing data in ElasticSearch or Stdout.  Great for keeping track of elastic environments and auditing configurations.
 
-Every wanted to minimize logging into servers, or limiting production access?
+Resources gathered if applicable:
 
-Think CMDB like-features without the B.S.   Create graphs/lists on high disk usage/CPU utilization, kernel versions, Docker containers, TCP4/6 listening ports, AWS inventory, installed packages (rpm, dpkg, pip, gem), etc.  The agent is a signally golang compiled binary able to run across platforms without runtime dependencies.
+- RHEL Audit Rules
+- CPU Count
+- Disk Stats
+- Docker Containers
+- Domain Name
+- EC2 Instance Metadata
+- Ruby Gems
+- Hostname
+- IP Address
+- IPTables Rules
+- IP Routes
+- Kernel Version
+- Load Averages
+- Memory Stats
+- RPM / Deb Packages
+- Python Pip Packages
+- OS Platform
+- OS Family
+- OS Version
+- TCP 4 Listening
+- TCP 6 Listening
+- Timezone
+- Uptime
+- Users
+- Users Logged In
+- Virtualization Role
+- Virtualization System
 
 
 ### Example JSON Output
@@ -36,20 +60,20 @@ Think CMDB like-features without the B.S.   Create graphs/lists on high disk usa
          "-w /etc/audit/audit.rules -p wa -k CFG_audit",
          "-w /etc/localtime -p wa -k time-change,CFG_system"
        ],
-       "cpu_count": "4",
-       "diskfree": "6.7GB",
-       "disktotal": "8.5GB",
-       "diskused": "19",
+       "cpu_count": 4,
+       "diskfree_gb": 6,
+       "disktotal_gb": 8,
+       "diskused_gb": 19,
        "dns_nameserver": [
          "8.8.8.8",
          "8.8.4.4"
        ],
        "docker": [
-         "dockerui/dockerui:latest, ./dockerui, '9000 9000 tcp 0.0.0.0'",
-         "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '",
-         "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '",
-         "robloach/forge-lamp:latest, supervisord, '22 49159 tcp 0.0.0.0 3306 49160 tcp 0.0.0.0 80 49161 tcp 0.0.0.0'",
-         "robloach/forge-lamp:latest, supervisord, '22 0 tcp  3306 0 tcp  80 0 tcp '"
+         "image=dockerui/dockerui:latest, command=./dockerui, port='9000 9000 tcp 0.0.0.0'",
+         "image=robloach/forge-lamp:latest, command=supervisord, port='22 0 tcp  3306 0 tcp  80 0 tcp '",
+         "image=robloach/forge-lamp:latest, command=supervisord, port='22 0 tcp  3306 0 tcp  80 0 tcp '",
+         "image=robloach/forge-lamp:latest, command=supervisord, port='22 49159 tcp 0.0.0.0 3306 49160 tcp 0.0.0.0 80 49161 tcp 0.0.0.0'",
+         "image=robloach/forge-lamp:latest, command=supervisord, port='22 0 tcp  3306 0 tcp  80 0 tcp '"
        ],
        "domain": "ec2.internal",
        "ec2_ami_id": "ami-bc8131d4",
@@ -88,14 +112,14 @@ Think CMDB like-features without the B.S.   Create graphs/lists on high disk usa
          "172.17.0.0/16 dev docker0  proto kernel  scope link  src 172.17.42.1 ",
          "192.168.1.0/24 dev eth0  proto kernel  scope link  src 192.168.1.10 "
        ],
-       "kernelversion": "2.6.32-431.29.2.el6.x86_64",
-       "lastrun": "2015-05-21T17:54",
-       "load15": "0",
-       "load1": "0",
-       "load5": "0",
-       "memoryfree": "133MB",
-       "memorytotal": "604MB",
-       "memoryused": "67",
+       "kernel_version": "2.6.32-431.29.2.el6.x86_64",
+       "lastrun": "2015-05-21T23:29:49-04:00",
+       "load15": 0,
+       "load1": 0,
+       "load5": 0,
+       "memoryfree_gb": 2,
+       "memorytotal_gb": 16,
+       "memoryused_gb": 14,
        "os": "linux",
        "packages": [
          "acl-2.2.49-6.el6.x86_64",
@@ -141,8 +165,8 @@ Think CMDB like-features without the B.S.   Create graphs/lists on high disk usa
          "yum-presto-0.4.4"
        ],
        "platform": "centos",
-       "platformfamily": "rhel",
-       "platformverison": "6.5",
+       "platform_family": "rhel",
+       "platform_verison": "6.5",
        "tcp4_listen": [
          "0.0.0.0:9200 /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64/jre/bin/java",
          "0.0.0.0:8080 /usr/bin/python",
@@ -161,7 +185,7 @@ Think CMDB like-features without the B.S.   Create graphs/lists on high disk usa
          "0000:0000:0000:0000:0000:0000:0000:0000:3000 /usr/sbin/grafana-server"
        ],
        "timezone": "UTC",
-       "uptime": "471h18m59s",
+       "uptime_days": 9,
        "users": [
          "root:x:0:0:root:/root:/bin/bash",
          "adm:x:3:4:adm:/var/adm:/sbin/nologin",
@@ -173,8 +197,8 @@ Think CMDB like-features without the B.S.   Create graphs/lists on high disk usa
          "root-pts/0",
          "timski-pts/1"
        ],
-       "virtualizationrole": "guest",
-       "virtualizationsystem": "xen"
+       "virtualization_role": "guest",
+       "virtualization_system": "xen"
     }
 
 
@@ -184,32 +208,29 @@ http://elasticsearch:9200/index/type
 
  Plural terminology:
 
-http://elasticsearch:9200/environment/hostname
+http://elasticsearch:9200/environment/ipaddress
 
 Agent Run Time:
 
-The agent runs every five minutes, it will delete the host out of the environment and post real-time data at the five minute interval.
+The agent runs every five minutes, and post real-time data to ElasticSearch.
 
-** If you were to delete all hosts in the environment nightly.   If the agent is running and the server is up, it will populate the inventory currently with only running hosts and their data.  This works very well in dynamic compute environments.
-
-    # Delete all hosts out of the environment
-    curl -XDELETE http://elasticsearch:9200/environment/*
+** If you were to delete all hosts in the environment nightly.   If the agent is running and the server is up, it will populate the inventory currently with only running hosts and their data.  This works very well in elastic compute environments.
 
 
 ## Install Dependencies
 
 ### Server
 
- - ElasticSearch (Listening on IPv4 0.0.0.0 not 127.0.0.1 or :::)
- - [elasticsearch-http-basic Plugin](https://github.com/Asquera/elasticsearch-http-basic) (Optional)
- - Java 7.x / OpenJDK 7
- - Kibana
+ - ElasticSearch 5.x
+ - [elasticsearch-http-user-auth Plugin](https://github.com/elasticfence/elasticsearch-http-user-auth) (Optional)
+ - Java 8.x / OpenJDK 8
+ - Kibana 5.x
 
 
  **Last step is configure ElasticSearch mappings for all indexes to not be analyzed:**
 
 
-       curl -XPUT localhost:9200/_template/template_1 -d '
+       curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_template/template_1 -d '
        {
           "template":"*",
           "settings":{
@@ -222,13 +243,13 @@ The agent runs every five minutes, it will delete the host out of the environmen
                 },
                 "dynamic_templates":[
                    {
-                      "string_fields":{
+                      "fields":{
                          "match":"*",
                          "match_mapping_type":"string",
                          "mapping":{
-                            "type":"string",
-                            "index":"not_analyzed",
-                            "omit_norms":true
+                            "type":"keyword",
+                            "index":true,
+                            "norms":false
                          }
                       }
                    }
@@ -240,27 +261,16 @@ The agent runs every five minutes, it will delete the host out of the environmen
 
 ### Client
 
- - Packages coming soon, for now `go build` project
- - `mkdir -p /opt/plural/{bin,conf}`
- - Move compiled binary to /opt/plural/bin/
-
-
-## Build Dependencies
-
-    go get github.com/spf13/viper
-    go get github.com/shirou/gopsutil
-    go get github.com/dustin/go-humanize
-    go get github.com/fsouza/go-dockerclient
-    go get github.com/drael/GOnetstat
-
+ - Go 1.9
+ - Make
+ 
 
 ## Command-Line Arguments
 
 No flags / arguments will do a one-time run and produce a JSON file in the current path of the binary
 
     -d, --daemon     Run in daemon mode
-    -c, --config     Set configuration path, default path is /opt/plural/conf
-    -o, --output     Output JSON file in a directory specified
+    -c, --config     Set configuration path, defaults are ['./','/etc/plural/conf','/opt/plural/conf','./conf']
 
 
 ## Configuration
@@ -268,10 +278,11 @@ No flags / arguments will do a one-time run and produce a JSON file in the curre
 Configurations can be written in YAML, JSON or TOML.
 
 */opt/plural/conf/plural.yaml*
+*DEFAULT  values if no config is present*
 
     # ElasticSearch Indexer
-    elastic_host: 54.145.182.91
-    elastic_port: 9200
+    host: localhost
+    port: 9200
 
     # ElasticSearch Index Name
     ## This can be anything, it could be aws, softlayer, prod, staging
@@ -282,41 +293,21 @@ Configurations can be written in YAML, JSON or TOML.
     interval: 300
 
     # Username if http-basic plugin is enabled
-    username: admin
+    username:
 
     #Password if http-basic plugin is enabled
-    password: admin_pw
+    password:
 
-    # Overwrite ElasticSearch host type data every run (don't keep historical data)
-    overwrite: enable
-
-*DEFAULT  values if no config is present*
-
-    elastic_host : localhost
-    elastic_port : 9200
-    environment : dev
-    interval: 300
-    username: undef
-    password: undef
-    overwrite: undef
-
-
-## Log Output Example
-
-    2015-08-25T23:20:50 your_hostname INFO no config file used, using default configuration
-    2015-08-25T23:20:50 your_hostname INFO your_hostname.json SHA256 checksum is 49377941579c5d8ce344a771c64a4b21f53c3f87c698a122372eef83f4bfda0e
-    2015-08-25T23:20:50 your_hostname INFO elasticsearch endpoint: http://ip_address:9200/dev/your_hostname
-    2015-08-25T23:20:50 your_hostname DELETE elasticsearch type status: 200 OK
-    2015-08-25T23:20:50 your_hostname POST json elasticsearch type status: 201 Created
-    2015-08-25T23:20:50 your_hostname POST response body: {"_index":"dev","_type":"your_hostname","_id":"AU9oBcN52kmffH_oPliZ","_version":1,"created":true}
+    # Secure true enables HTTPS instead of HTTP)
+    secure: false
 
 
 ## Platforms Tested On
 
- - CentOS/RHEL 6.x
+ - CentOS/RHEL 7.x
  - Fedora 20
- - Ubuntu 14
- - Mac OS X 13.4.0
+ - Ubuntu 16
+ - Mac OS X 16.7.0
 
 
 ## Screenshots

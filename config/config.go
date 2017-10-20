@@ -14,8 +14,8 @@ func init() {
 	viper.ReadInConfig()
 
 	// Default settings if no config file is supplied
-	viper.SetDefault("elastic_host", "localhost")
-	viper.SetDefault("elastic_port", "9200")
+	viper.SetDefault("host", "localhost")
+	viper.SetDefault("port", "9200")
 	viper.SetDefault("environment", "dev")
 	viper.SetDefault("interval", "300")
 	viper.SetDefault("username", "")
