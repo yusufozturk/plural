@@ -30,25 +30,19 @@ import (
 var (
 	configFlag = flag.String("config", "", "  Set configuration path, default is /opt/plural/conf")
 	daemonFlag = flag.Bool("daemon", false, "  Run in daemon mode")
-	outputFlag = flag.String("output", "", "  Output JSON file in a directory specified")
-	d          data.PluralJSON
-	wg         sync.WaitGroup
 )
 
 func init() {
 	flag.StringVar(configFlag, "c", "", "  Set configuration path, default is /opt/plural/conf")
 	flag.BoolVar(daemonFlag, "d", false, "  Run in daemon mode")
-	flag.StringVar(outputFlag, "o", "", "  Output JSON file in a directory specified")
 }
 
 var usage = `Usage: plural [options] <args>
 
     -d, --daemon     Run in daemon mode
     -c, --config     Set configuration path, default path is /opt/plural/conf
-    -o, --output     Output JSON file in a directory specified
 
-
-Example:       plural -d -c /opt/plural/conf -o /tmp
+Example:       plural -d -c /opt/plural/conf
 
 Documentation:  https://github.com/marshyski/plural/blob/master/README.md
 
@@ -63,10 +57,13 @@ func main() {
 	flag.Parse()
 
 	timeN := time.Now()
-	lastRun := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", timeN.Year(), timeN.Month(), timeN.Day(), timeN.Hour(), timeN.Minute(), timeN.Second())
-
-	wg.Add(17)
 	for {
+		lastRun := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", timeN.Year(), timeN.Month(), timeN.Day(), timeN.Hour(), timeN.Minute(), timeN.Second())
+		var (
+			d  data.PluralJSON
+			wg sync.WaitGroup
+		)
+		wg.Add(17)
 		go func() {
 			defer wg.Done()
 			network.Conns(&d)
@@ -137,15 +134,14 @@ func main() {
 		}()
 		wg.Wait()
 
-		j, _ := json.Marshal(d)
-		fmt.Println(string(j))
-
 		if !*daemonFlag {
+			j, err := json.Marshal(d)
+			if err != nil {
+				fmt.Printf("Error: %s\n", err)
+			}
+			fmt.Println(string(j))
 			break
 		}
-
-		// Sleep / interval time for daemon
 		time.Sleep(time.Duration(config.ConfigInt("interval")) * time.Second)
-
 	}
 }
