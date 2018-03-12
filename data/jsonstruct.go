@@ -36,6 +36,7 @@ type PluralJSON struct {
 	Platform             string   `json:"platform,omitempty"`
 	Platformfamily       string   `json:"platform_family,omitempty"`
 	Platformverison      string   `json:"platform_verison,omitempty"`
+	Snaps                []string `json:"snaps,omitempty"`
 	TCP4Listen           []string `json:"tcp4_listen,omitempty"`
 	TCP6Listen           []string `json:"tcp6_listen,omitempty"`
 	Timezone             string   `json:"timezone,omitempty"`

@@ -36,6 +36,7 @@ Resources gathered if applicable:
 - Memory Stats
 - RPM / Deb Packages
 - Python Pip Packages
+- Snap Packages
 - OS Platform
 - OS Family
 - OS Version
@@ -167,6 +168,10 @@ Resources gathered if applicable:
        "platform": "centos",
        "platform_family": "rhel",
        "platform_verison": "6.5",
+       "snaps":[
+         "core-16-2.31.1",
+         "slack-3.0.5",
+       ],
        "tcp4_listen": [
          "0.0.0.0:9200 /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64/jre/bin/java",
          "0.0.0.0:8080 /usr/bin/python",

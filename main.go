@@ -62,7 +62,7 @@ func main() {
 			d  data.PluralJSON
 			wg sync.WaitGroup
 		)
-		wg.Add(17)
+		wg.Add(18)
 		go func() {
 			defer wg.Done()
 			network.Conns(&d)
@@ -106,6 +106,10 @@ func main() {
 		go func() {
 			defer wg.Done()
 			packages.Gem(&d)
+		}()
+		go func() {
+			defer wg.Done()
+			packages.Snaps(&d)
 		}()
 		go func() {
 			defer wg.Done()
